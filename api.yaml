@@ -1,0 +1,7 @@
+openapi: "3.0.0"
+info:
+  version: "0.0.1"
+  title: "Prteen API"
+  description: API for searching, creating and participating to parties
+
+paths:
