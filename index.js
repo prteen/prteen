@@ -1,5 +1,5 @@
 const app = require("./app/app.js");
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const port = process.env.PORT || 8080;
 
