@@ -11,8 +11,8 @@ const mongodb_db = process.env.MONGODB_DB
 app.locals.db = mongoose.connect(`mongodb+srv://${encodeURIComponent(mongodb_user)}:${mongodb_pass}@${mongodb_host}/${mongodb_db}`, { ssl: true })
   .then(() => {  
     console.log("Connected to Database");
-    // app.listen(port, () => {
-    //     console.log(`Server listening on port ${port}`);
-    // })
+    app.listen(port, () => {
+        console.log(`Server listening on port ${port}`);
+    })
 })
 
