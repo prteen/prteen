@@ -1,3 +1,6 @@
+# user defined
+*.pem
+
 # Logs
 logs
 *.log
