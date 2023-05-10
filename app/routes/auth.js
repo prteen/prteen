@@ -49,7 +49,7 @@ router.post("/signin", async (req, res) => {
   try {
     const {username, password} = req.body;
 
-    const user = User.findOne({ username: username });
+    const user = await User.findOne({ username: username });
 
     // check if user exists
     if (!user)
@@ -79,6 +79,7 @@ router.post("/signin", async (req, res) => {
     send_access_token(req, res, access_token)
 
   } catch (err) {
+    console.log(err)
     return res.status(500).json({
       message: "Error signing in",
       type: "error",
@@ -126,7 +127,7 @@ router.post("/refresh_token", async (req, res) => {
     // At this point, the refresh token is valid
     // Check user
 
-    const user = User.findById(id)
+    const user = await User.findById(id)
 
     // if the user doesn't exist
     if (!user) 
