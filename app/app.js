@@ -10,7 +10,7 @@ let x = new Crud(1, 2)
 
 
 app.get("/", (req, res) => {
-  res.send("Ciao")
+  res.send("Welcome to Prteen! Api endpoint is at <a href=/api/v1/>/api/v1/</a>")
 })
 
 app.use("/api/v1", api_router)
