@@ -16,4 +16,14 @@ router.get("/", (req, res) => {
     })
 })
 
+router.get("/title/:title", (req, res) => {
+  Party.find({title: req.params.title})
+    .then(parties => {
+      res.json(parties)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+})
+
 module.exports = router

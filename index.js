@@ -9,23 +9,13 @@ const mongodb_host = process.env.MONGODB_HOST
 const mongodb_db = process.env.MONGODB_DB
 
 const party = require("./app/models/party.js")
-let p = new party.Party({
-  name: "Test Party",
-  description: "This is a test party",
-  tags: ["test", "party"],
-  image: null,
-  date: new Date(),
-  location: "Test Location",
-  organizer: null,
-  max_participants: 10,
-  participants: [],
+
+app.locals.db = mongoose.connect(`mongodb+srv://${encodeURIComponent(mongodb_user)}:${mongodb_pass}@${mongodb_host}/${mongodb_db}`, { 
+  ssl: true, 
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
-
-
-app.locals.db = mongoose.connect(`mongodb+srv://${encodeURIComponent(mongodb_user)}:${mongodb_pass}@${mongodb_host}/${mongodb_db}`, { ssl: true })
-  .then(() => {  
-    party.Party.collection.insertOne(p)
-    
+  .then(() => {   
     console.log("Connected to Database");
     app.listen(port, () => {
         console.log(`Server listening on port ${port}`);

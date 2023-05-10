@@ -3,7 +3,7 @@ const {imageSchema, Image} = require('./image.js')
 const {userSchema, User} = require('./user.js')
 
 const partySchema = new Schema({
-  name: String,
+  title: String,
   description: String,
   tags: [String],
   image: imageSchema,
