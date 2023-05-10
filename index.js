@@ -18,7 +18,7 @@ app.locals.db = mongoose.connect(`mongodb+srv://${encodeURIComponent(mongodb_use
   .then(() => {   
     console.log("Connected to Database");
     app.listen(port, () => {
-        console.log(`Server listening on port ${port}`);
+        console.log(`Server started on http://127.0.0.1:${port}/`);
     })
 })
 
