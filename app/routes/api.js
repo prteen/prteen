@@ -6,7 +6,7 @@ const parties = require("./parties")
 const users = require("./users")
 
 parties.register(router, "/parties")
-console.log(router)
 users.register(router, "/users")
+
 
 module.exports = router
