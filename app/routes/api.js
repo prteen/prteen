@@ -2,10 +2,11 @@ const express = require("express")
 const router = express.Router()
 const mongoose = require("mongoose")
 
-const parties_router = require("./parties")
+const parties_crud = require("./parties")
 const users_router = require("./users")
 
-router.use("/parties", parties_router)
+parties_crud.register(router, "/parties")
+//router.use("/parties", parties_router)
 router.use("/users", users_router)
 
 module.exports = router
