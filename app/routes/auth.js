@@ -14,7 +14,6 @@ const {User} = require('../models/user');
 
 router.post("/signup", async (req, res) => {
   try {
-    console.log(req)
     const { username, email, password } = req.body;
     const user = await User.findOne({ username: username });
 
