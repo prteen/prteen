@@ -15,6 +15,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  refresh_token: {
+    type: String,
+    required: false,
+  }
 })
 
 const User = model('User', userSchema)
