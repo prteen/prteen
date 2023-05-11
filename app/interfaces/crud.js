@@ -23,7 +23,7 @@ class Crud {
   register(parent, route) {
     let router = express.Router()
 
-    router.get("/", (req, res) => {
+    router.get("/", (_req, res) => {
       this.model.find()
         .then(objs => {
           res.json(objs)
@@ -34,10 +34,8 @@ class Crud {
     })
 
     router.post("/", async (req, res) => {
-      // Future changes to control (organizer, title) tuple to be unique 
       try {
-        let obj = new this.model(req.body) 
-        console.log(obj)
+        let obj = new this.model(req.body)
         await obj.save() 
         return res.status(200).json({
           message: "Successfully created new obj",
