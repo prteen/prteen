@@ -5,7 +5,7 @@ const api_router = require("./routes/api")
 const app = express()
 
 app.get("/", (req, res) => {
-  res.send("Ciao")
+  res.send("Welcome to Prteen! Api endpoint is at <a href=/api/v1/>/api/v1/</a>")
 })
 
 app.use(body_parser.json());

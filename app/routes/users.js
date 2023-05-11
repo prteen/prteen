@@ -1,7 +1,17 @@
 const express = require("express")
-const router = express.Router()
 const mongoose = require("mongoose")
 
 const {User} = require("../models/user")
+const {Crud, CrudSettings} = require("../interfaces/crud")
 
-module.exports = router
+const crud = new Crud(
+  User,
+  {
+    identifiers: {
+      username: null,
+      email: null
+    }
+  }
+)
+
+module.exports = crud
