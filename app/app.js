@@ -9,6 +9,7 @@ app.get("/", (req, res) => {
 })
 
 app.use(body_parser.json());
+app.use(body_parser.urlencoded({extended: true}))
 
 app.use("/api/v1", api_router)
 

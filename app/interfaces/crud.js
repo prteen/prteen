@@ -63,13 +63,27 @@ const operations = {
   },
 
   update(parent, router, route) {
+    console.log(` --> creating operation PUT @ ${route}/`)
+
     parent.settings.forIdentifiers((id_db, id_symb) => {
-      console.log(` --> creating operation PUT @ ${route}/${id_symb}`)
-      router.get(`/${id_symb}/:id`, async (req, res) => {
+      router.put(`/${id_symb}/:id`, async (req, res) => {
         try {
+
+            console.log(req.body)
           let query = {}
           query[id_db] = req.params.id
           let obj = await parent.model.findOne(query)
+          if(obj === null) {
+            let new_data = Object.assign({}, req.body)
+            new_data[id_db] = req.params.id
+            obj = new parent.model(new_data)
+            await obj.save()
+            return res.status(200).json({
+              message: "Successfully created new obj",
+              type: "success",
+            })
+          }
+          console.log(obj)
           obj = Object.assign(obj, req.body)
           await obj.save()
           return res.status(200).json({
@@ -77,6 +91,7 @@ const operations = {
             type: "success",
           })
         } catch (error) {
+          throw error
           return res.status(500).json({
             message: "Failed to update obj",
             type: "error",
