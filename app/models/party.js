@@ -14,7 +14,7 @@ const PartySchema = new Schema({
     ref: 'User',
   },
   max_participants: Number,
-  participants: [UserSchema],
+  participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
 })
 
 const Party = model('Party', PartySchema)

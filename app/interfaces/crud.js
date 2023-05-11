@@ -37,7 +37,6 @@ class Crud {
       // Future changes to control (organizer, title) tuple to be unique 
       try {
         let obj = new this.model(req.body) 
-        console.log(obj)
         await obj.save() 
         return res.status(200).json({
           message: "Successfully created new obj",
