@@ -1,10 +1,7 @@
-const express = require("express")
-const mongoose = require("mongoose")
-
 const {User} = require("../models/user")
 const {Crud, CrudSettings} = require("../interfaces/crud")
 
-const crud = new Crud(
+module.exports = new Crud(
   User,
   {
     identifiers: {
@@ -13,5 +10,3 @@ const crud = new Crud(
     }
   }
 )
-
-module.exports = crud

@@ -1,14 +1,15 @@
 const mongoose = require("mongoose")
 const {mongodb} = require("../settings")
 
-
-function connect() {
-  return mongoose.connect(`mongodb+srv://${encodeURIComponent(mongodb.username)}:${mongodb.password}@${mongodb.host}/${mongodb.db}`, {
+exports.connect = async function(overrides = {}) {
+  return await mongoose.connect(`mongodb+srv://${encodeURIComponent(overrides.username || mongodb.username)}:${overrides.password || mongodb.password}@${overrides.host || mongodb.host}/${overrides.db || mongodb.db}`, {
     ssl: true, 
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-} 
+}
 
-module.exports = {connect}
+exports.disconnect = async function() {
+  await mongoose.connection.close()
+}
 
