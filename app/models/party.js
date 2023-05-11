@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose')
+const {Schema, model, ObjectId} = require('mongoose')
 const {ImageSchema, Image} = require('./image')
 const {UserSchema, User} = require('./user')
 
@@ -9,7 +9,10 @@ const PartySchema = new Schema({
   image: ImageSchema,
   date: Date,
   location: String,
-  organizer: UserSchema,
+  organizer: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
   max_participants: Number,
   participants: [UserSchema],
 })

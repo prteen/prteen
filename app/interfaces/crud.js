@@ -33,6 +33,26 @@ class Crud {
         })
     })
 
+    router.post("/", async (req, res) => {
+      // Future changes to control (organizer, title) tuple to be unique 
+      try {
+        let obj = new this.model(req.body) 
+        console.log(obj)
+        await obj.save() 
+        return res.status(200).json({
+          message: "Successfully created new obj",
+          type: "success",
+        })
+      } catch (error) {
+        return res.status(500).json({
+          message: "Failed to create new obj",
+          type: "error",
+          error: error
+        }) 
+      } 
+
+    })
+
     Object.keys(this.settings.identifiers).forEach((id_name) => {
       let id_alias = this.settings.identifiers[id_name] || id_name
 
