@@ -1,20 +1,25 @@
 const {Schema, model, ObjectId} = require('mongoose')
-const {ImageSchema, Image} = require('./image')
-const {UserSchema, User} = require('./user')
+const {ImageSchema} = require('./image')
 
 const PartySchema = new Schema({
   title: String,
   description: String,
   tags: [String],
-  image: ImageSchema,
+  image: {
+    type: ImageSchema,
+    ref: "Image"
+  },
   date: Date,
   location: String,
   organizer: {
-    type: Schema.Types.ObjectId,
+    type: ObjectId,
     ref: 'User',
   },
   max_participants: Number,
-  participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  participants: [{
+    type: ObjectId,
+    ref: 'User'
+  }]
 })
 
 const Party = model('Party', PartySchema)
