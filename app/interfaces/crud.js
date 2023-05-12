@@ -91,7 +91,6 @@ const operations = {
             type: "success",
           })
         } catch (error) {
-          throw error
           return res.status(500).json({
             message: "Failed to update obj",
             type: "error",
@@ -123,7 +122,6 @@ const operations = {
             response: obj
           })
         } catch (error) {
-          throw error
           return res.status(500).json({
             message: "Failed to delete obj",
             type: "error",
