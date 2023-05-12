@@ -1,6 +1,4 @@
 const {Schema, model, ObjectId} = require('mongoose')
-const {ImageSchema, Image} = require('./image')
-// const {UserSchema, User} = require('./user')
 
 const PartySchema = new Schema({
   title: String,
