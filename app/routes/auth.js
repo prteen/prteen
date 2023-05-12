@@ -136,7 +136,7 @@ router.post("/refresh_token", async (req, res) => {
         type: "error"
     })
 
-    if (user.refresh_token != refresh_token)
+    if (user.refresh_token !== refresh_token)
       return res.status(500).json({
         message: "Refresh token is invalid",
         type: "error"
