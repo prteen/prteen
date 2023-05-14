@@ -110,7 +110,7 @@ router.post("/refresh_token", async (req, res) => {
     // verify the refresh token
     let id;
     try {
-      id = verify(refresh_token, process.env.REFRESH_TOKEN_SECRET).id
+      id = await verify(refresh_token, process.env.REFRESH_TOKEN_SECRET).id
     } catch (err) {
       return res.status(500).json({
         message: "Refresh token is invalid",
@@ -156,7 +156,8 @@ router.post("/refresh_token", async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       message: "Error refreshing token",
-      type: "error"
+      type: "error",
+      err
     })
   }
 
