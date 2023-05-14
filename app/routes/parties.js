@@ -26,6 +26,7 @@ router.put('/edit/:id', protected, async (req, res) => {
     let party = await Party.findById(req.params.id)
     if (!party) return res.status(404).json({message: 'Party not found', type: 'error'})
 
+    // Check if the user is the organizer
     if (!party.organizer.equals(req.user._id)) return res.status(401).json({message: 'User is not the organizer', type: 'error'})
 
     // Set the new values

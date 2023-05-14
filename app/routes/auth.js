@@ -89,7 +89,7 @@ router.post("/signin", async (req, res) => {
 })
 
 // signout function
-router.post("/signout", (_req, res) => {
+router.post("/signout", async (_req, res) => {
   res.clearCookie("refresh_token")
   return res.json({
     message: "Logged out",

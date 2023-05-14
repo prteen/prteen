@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose')
+const {Schema, model, ObjectId} = require('mongoose')
 
 const UserSchema = new Schema({
   username: {
@@ -14,6 +14,11 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
+  },
+  profile_picture: {
+    type: ObjectId,
+    ref: "Image",
+    required: false,
   },
   refresh_token: {
     type: String,
