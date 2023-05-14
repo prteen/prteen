@@ -20,6 +20,12 @@ const UserSchema = new Schema({
     ref: "Image",
     required: false,
   },
+
+  friends: [{
+    type: ObjectId,
+    ref: 'User',
+  }],
+
   refresh_token: {
     type: String,
     required: false,
