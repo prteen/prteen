@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose')
+const {Schema, model, ObjectId} = require('mongoose')
 
 const UserSchema = new Schema({
   username: {
@@ -15,6 +15,17 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  profile_picture: {
+    type: ObjectId,
+    ref: "Image",
+    required: false,
+  },
+
+  friends: [{
+    type: ObjectId,
+    ref: 'User',
+  }],
+
   refresh_token: {
     type: String,
     required: false,

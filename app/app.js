@@ -1,5 +1,6 @@
 const express = require('express')
 const body_parser = require('body-parser')
+const cookie_parser = require('cookie-parser')
 
 const api_router = require("./routes/api")
 const app = express()
@@ -10,6 +11,7 @@ app.get("/", (_req, res) => {
 
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}))
+app.use(cookie_parser())
 
 app.use("/api/v1", api_router)
 

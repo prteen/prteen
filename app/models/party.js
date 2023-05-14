@@ -6,7 +6,7 @@ const PartySchema = new Schema({
   tags: [String],
   image: {
     type: ObjectId,
-    refer: "Image",
+    ref: "Image",
   },
   date: Date,
   location: String,

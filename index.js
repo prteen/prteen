@@ -6,7 +6,7 @@ app.locals.db = connect()
   .then(() => {
     console.log("Connected to Database");
     app.listen(http.port, () => {
-        console.log(`Server started on http://127.0.0.1:${http.port}/`);
+        console.log(`🚀 Server started on http://127.0.0.1:${http.port}/`);
     })
 })
 
