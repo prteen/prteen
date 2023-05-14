@@ -4,11 +4,13 @@ const router = express.Router()
 const parties = require("./parties")
 const users = require("./users")
 const auth = require("./auth")
-const { protected, logged_in } = require("../utils/protected")
+const { protected } = require("../utils/protected")
 
-parties.register(router, "/parties")
+parties.crud.register(router, "/parties")
 users.register(router, "/users")
 router.use("/auth", auth)
+
+router.use("/parties", parties.router)
 
 router.get("/protected", protected, async (req, res) => {
   try {
