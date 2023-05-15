@@ -3,7 +3,7 @@ const body_parser = require('body-parser')
 const cookie_parser = require('cookie-parser')
 const morgan = require('morgan')
 
-module.exports = async function() {
+module.exports = async function(port, callback) {
   const api_router = require("./routes/api")
   const app = express()
 
@@ -18,5 +18,5 @@ module.exports = async function() {
 
   app.use("/api/v1", api_router)
 
-  return app
+  app.listen(port, callback)
 } 
