@@ -12,6 +12,10 @@ router.use("/auth", auth)
 
 router.use("/parties", parties.router)
 
+router.get("/", (_req, res) => {
+  res.send("<a href=parties>parties/</a><br><a href=users>users/</a><br><a href=auth>auth/</a>")
+})
+
 router.get("/protected", protected, async (req, res) => {
   try {
     if (req.user)

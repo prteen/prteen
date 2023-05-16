@@ -4,6 +4,7 @@ class CrudSettings {
   constructor(data) {
     this.identifiers = data.identifiers || {}
     this.exclude = data.exclude || []
+    this.overrides = data.overrides || {}
   }
 
   forIdentifiers(callback) {
@@ -62,14 +63,23 @@ const operations = {
     })
   },
 
-  update(parent, router, route) {
+  update(parent, router, route, validator) {
     console.log(` --> creating operation PUT @ ${route}/`)
 
     parent.settings.forIdentifiers((id_db, id_symb) => {
       router.put(`/${id_symb}/:id`, async (req, res) => {
         try {
-
-            console.log(req.body)
+          if(validation !== undefined) {
+            const validation = validator(req, res)
+            if(!validation.ok) {
+              return res.status(401).json({
+                message: "Unauthorized",
+                type: "error",
+                error: validation.error
+              })
+            }
+          }
+          console.log(req.body)
           let query = {}
           query[id_db] = req.params.id
           let obj = await parent.model.findOne(query)
@@ -152,7 +162,11 @@ class Crud {
         return
       }
       console.log(`=> Creating operation ${operation} for route ${route}`)
-      operations[operation](this, router, route)
+      if(operation in this.settings.overrides) {
+        this.settings.overrides[operation](this, router, route)
+      } else {
+        operations[operation](this, router, route)
+      }
     })
 
     parent.use(route, router)
