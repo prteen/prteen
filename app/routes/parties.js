@@ -6,16 +6,32 @@ const { User } = require("../models/user")
 
 const { Party } = require("../models/party")
 const { Crud } = require("../interfaces/crud")
+const { protected } = require("../utils/protected")
 
 const crud = new Crud(
   Party, 
-  { identifiers: {
-    _id: "id",
-    title: null
-  }}
+  { 
+    identifiers: {
+      _id: "id",
+      title: null
+    },
+    overrides: {
+      "read_all": (parent, router, route, validator) => {
+        console.log(` --> creating operation GET @ ${route}/`)
+        router.get("/", protected, (req, res) => {
+          parent.model.find({"participants": {"$in": [req.user._id]}})
+            .then(objs => {
+              res.json(objs)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        })
+      }
+    },
+    exclude: ["create", "read", "update", "delete"]
+  }
 )
-
-const { protected } = require("../utils/protected")
 
 // Edit a party. Requires the user to be logged in.
 router.put('/edit/:id', protected, async (req, res) => {
