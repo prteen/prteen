@@ -102,6 +102,9 @@ const user_crud = new Crud(
           let status = req.body.status
           Friendship.findById(id)
             .then(friendship => {
+              if (friendship == null) {
+                return res.status(400).json({error: "Friendship does not exist"})
+              }
               if (friendship.to.equals(user) && friendship.status == "pending") {
                 if (status != "accepted" && status != "rejected") {
                   return res.status(400).json({error: "Invalid status", status: status})
@@ -138,7 +141,7 @@ const user_crud = new Crud(
                 if (friendship.status == "rejected") {
                   return res.status(400).json({error: "Cannot delete rejected friendship"})
                 }
-                friendship.remove()
+                friendship.deleteOne()
                   .then(friendship => {
                     res.json(friendship)
                   })
