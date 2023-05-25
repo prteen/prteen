@@ -1,8 +1,8 @@
 const {ObjectId, model, Schema} = require('mongoose');
 
 const FriendshipSchema = new Schema({ 
-  user1: {type: ObjectId, ref: 'User'}, 
-  user2: {type: ObjectId, ref: 'User'},
+  from: {type: ObjectId, ref: 'User', required: true}, 
+  to: {type: ObjectId, ref: 'User', required: true},
   status: {type: String, enum: ['pending', 'accepted', 'rejected']},
 })
 
