@@ -2,6 +2,7 @@ const express = require('express')
 const body_parser = require('body-parser')
 const cookie_parser = require('cookie-parser')
 const morgan = require('morgan')
+const fs = require('fs')
 
 module.exports = async function(port, callback) {
   const api_router = require("./routes/api")
@@ -17,6 +18,12 @@ module.exports = async function(port, callback) {
   app.use(cookie_parser())
 
   app.use("/api/v1", api_router)
+  
+  app.get("/favicon.ico", (_req, res) => {
+    console.log("favicon")
+    res.set("Content-Type", "image/x-icon")
+    fs.createReadStream("../res/favicon.ico").pipe(res)
+  })
 
   app.listen(port, callback)
 } 
