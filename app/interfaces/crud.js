@@ -6,6 +6,10 @@ class CrudSettings {
     this.exclude = data.exclude || []
     this.overrides = data.overrides || {}
     this.validators = data.validators || {}
+
+    if(data.exclude === "__all__"){
+      this.exclude = Object.keys(operations)
+    }
   }
 
   forIdentifiers(callback) {
@@ -40,7 +44,7 @@ const operations = {
       router.get(`/${id_symb}/:id`, (req, res) => {
         let query = {}
         query[id_db] = req.params.id
-        parent.model.find(query)
+        parent.model.findOne(query)
           .then(obj => res.json(obj))
           .catch(err => {
             console.log(err)
@@ -157,13 +161,12 @@ class Crud {
     let router = express.Router()
 
     Object.keys(operations).forEach((operation) => {
-      if(this.settings.exclude.includes(operation)) {
-        return
-      }
-      console.log(`=> Creating operation ${operation} for route ${route}`)
       if(operation in this.settings.overrides) {
+        console.log(`=> Creating [overriden] operation ${operation} for route ${route}`)
         this.settings.overrides[operation](this, router, route)
-      } else {
+        return
+      } else if(!this.settings.exclude.includes(operation)) {
+        console.log(`=> Creating [automatic] operation ${operation} for route ${route}`)
         operations[operation](this, router, route, this.settings.validators[operation])
       }
     })
