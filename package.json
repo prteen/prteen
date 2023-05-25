@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index.js",
+    "restart": "./auto_restart.sh",
     "test": "jest",
     "clean-db": "node scripts/clean_db.js"
   },
