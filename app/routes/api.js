@@ -1,15 +1,15 @@
 const express = require("express")
 const router = express.Router()
 
-const {public: parties_public, logged: parties_logged, organizer: parties_organizer} = require("./parties")
+const {public: parties_public, users: parties_users, organizers: parties_organizers} = require("./parties")
 const users = require("./users")
 const auth = require("./auth")
 const friendships = require("./friendships")
 const { protected } = require("../utils/protected")
 
 parties_public.register(router, "/parties")
-parties_logged.register(router, "/parties/users")
-parties_organizer.register(router, "/parties/organizers")
+parties_users.register(router, "/parties/users")
+parties_organizers.register(router, "/parties/organizers")
 users.register(router, "/users")
 friendships.register(router, "/friendships")
 
