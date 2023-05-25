@@ -4,14 +4,14 @@ const { auth } = require('../../settings')
 // creates a JWT token that expires in 10 minutes
 const create_access_token = (id) => {
   return sign({id}, auth.access_token_secret, {
-    expiresIn: 100000000 * 60,
+    expiresIn: auth.access_token_expiration,
   })
 }
 
 // creates a JWT refresh token that expires in 7 days
 const create_refresh_token = (id) => {
   return sign({id}, auth.refresh_token_secret, {
-    expiresIn: "7d",
+    expiresIn: auth.refresh_token_expiration,
   })
 }
 

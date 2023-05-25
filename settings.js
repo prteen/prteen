@@ -13,7 +13,9 @@ module.exports = {
   },
   auth: {
     refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
-    access_token_secret: process.env.ACCESS_TOKEN_SECRET
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET,
+    access_token_expiration: process.env.ACCESS_TOKEN_EXPIRATION || "5m",
+    refresh_token_expiration: process.env.REFRESH_TOKEN_EXPIRATION || "7d"
   }
 }
 
