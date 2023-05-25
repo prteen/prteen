@@ -9,7 +9,7 @@ module.exports = new Crud(
       email: null,
       _id: "id"
     },
-    exclude: ["read_all"],
+    // exclude: ["read_all"],
     overrides: {
       read: (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ ${route}/username`)
