@@ -4,10 +4,13 @@ const router = express.Router()
 const parties = require("./parties")
 const users = require("./users")
 const auth = require("./auth")
+const friendships = require("./friendships")
 const { protected } = require("../utils/protected")
 
 parties.crud.register(router, "/parties")
 users.register(router, "/users")
+friendships.register(router, "/friendships")
+
 router.use("/auth", auth)
 
 router.use("/parties", parties.router)
