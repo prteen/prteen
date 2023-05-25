@@ -4,10 +4,10 @@ const PartySchema = new Schema({
   title: String,
   description: String,
   tags: [String],
-  image: {
+  images: [{
     type: ObjectId,
     ref: "Image",
-  },
+  }],
   date: Date,
   location: String,
   organizer: {

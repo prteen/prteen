@@ -9,9 +9,7 @@ class CrudSettings {
   }
 
   forIdentifiers(callback) {
-    Object.keys(this.identifiers).forEach((key) => {
-    callback(key, this.identifiers[key] || key)
-    })
+    Object.keys(this.identifiers).forEach((key) => callback(key, this.identifiers[key] || key))
   }
 }
 

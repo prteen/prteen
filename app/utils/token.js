@@ -3,7 +3,7 @@ const {sign} = require('jsonwebtoken');
 // creates a JWT token that expires in 10 minutes
 const create_access_token = (id) => {
   return sign({id}, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: 10 * 60,
+    expiresIn: 100000000 * 60,
   })
 }
 
