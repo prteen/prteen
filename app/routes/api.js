@@ -4,11 +4,14 @@ const router = express.Router()
 const {public: parties_public, logged: parties_logged} = require("./parties")
 const users = require("./users")
 const auth = require("./auth")
+const friendships = require("./friendships")
 const { protected } = require("../utils/protected")
 
 parties_public.register(router, "/parties")
 parties_logged.register(router, "/users/parties")
 users.register(router, "/users")
+friendships.register(router, "/friendships")
+
 router.use("/auth", auth)
 
 router.get("/", (_req, res) => {
