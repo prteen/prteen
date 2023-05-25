@@ -1,5 +1,6 @@
-const { verify } = require('jsonwebtoken');
-const { User } = require('../models/user');
+const { verify } = require('jsonwebtoken')
+const { User } = require('../models/user')
+const { auth } = require('../../settings')
 
 // Middleware for protected routes
 // Checks if the user is authenticated and adds the user to the request
@@ -12,7 +13,7 @@ const protected = async (req, res, next) => {
   const token = authorization.split(' ')[1];
   let id;
   try {
-    id = verify(token, process.env.ACCESS_TOKEN_SECRET).id;
+    id = verify(token, auth.access_token_secret).id;
   } catch (err) {
     return res.status(500).json({ message: 'Invalid token', type: 'error' });
   }

@@ -1,21 +1,21 @@
 require("dotenv/config")
 
-const http_port = process.env.HTTP_PORT || 8080
-const mongodb_user = process.env.MONGODB_USER
-const mongodb_pass = process.env.MONGODB_PASS
-const mongodb_host = process.env.MONGODB_HOST
-const mongodb_db = process.env.MONGODB_DB
-
 
 module.exports = {
   mongodb: {
-    username: mongodb_user,
-    password: mongodb_pass,
-    host: mongodb_host,
-    db: mongodb_db
+    username: process.env.MONGODB_USER,
+    password: process.env.MONGODB_PASS,
+    host: process.env.MONGODB_HOST,
+    db: process.env.MONGODB_DB
   },
   http: {
-    port: http_port
+    port: process.env.HTTP_PORT || 8080
+  },
+  auth: {
+    refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET,
+    access_token_expiration: process.env.ACCESS_TOKEN_EXPIRATION || "5m",
+    refresh_token_expiration: process.env.REFRESH_TOKEN_EXPIRATION || "7d"
   }
 }
 
