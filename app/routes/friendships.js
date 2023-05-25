@@ -13,7 +13,7 @@ const user_crud = new Crud(
     },
     overrides: {
       "create": (parent, router, route, validator) => {
-        console.log(` --> creating operation POST @ ${route}/`)
+        console.log(` --> creating operation POST @ ${route}/ [protected]`)
         router.post("/", protected, async (req, res) => {
           let from = req.user._id
           let to_username = req.body.to // username
@@ -52,7 +52,7 @@ const user_crud = new Crud(
         })
       },
       "read": (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ ${route}/:id`)
+        console.log(` --> creating operation GET @ ${route}/:id [protected]`)
         router.get("/:id", protected, (req, res) => {
           let id = req.params.id
           let user = req.user._id
@@ -70,7 +70,7 @@ const user_crud = new Crud(
         })
       },
       "read_all": (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ ${route}/sent`)
+        console.log(` --> creating operation GET @ ${route}/sent [protected]`)
         router.get("/view/sent", protected, (req, res) => {
           let user = req.user._id
           Friendship.find({from: user})
@@ -82,7 +82,7 @@ const user_crud = new Crud(
             })
         })
 
-        console.log(` --> creating operation GET @ ${route}/received`)
+        console.log(` --> creating operation GET @ ${route}/received [protected]`)
         router.get("/view/received", protected, (req, res) => {
           let user = req.user._id
           Friendship.find({to: user})
@@ -95,7 +95,7 @@ const user_crud = new Crud(
         })
       },
       "update": (parent, router, route, validator) => {
-        console.log(` --> creating operation PUT @ ${route}/:id`)
+        console.log(` --> creating operation PUT @ ${route}/:id [protected]`)
         router.put("/:id", protected, (req, res) => {
           let id = req.params.id
           let user = req.user._id
@@ -125,7 +125,7 @@ const user_crud = new Crud(
         })
       },
       "delete": (parent, router, route, validator) => {
-        console.log(` --> creating operation DELETE @ ${route}/:id`)
+        console.log(` --> creating operation DELETE @ ${route}/:id [protected]`)
         router.delete("/:id", protected, (req, res) => {
           let id = req.params.id
           let user = req.user._id
