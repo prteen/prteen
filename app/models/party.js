@@ -13,13 +13,13 @@ const PartySchema = new Schema({
   organizer: {
     type: ObjectId,
     ref: 'User',
+    immutable: true,
   },
   max_participants: Number,
   participants: [{
     type: ObjectId,
     ref: 'User'
   }],
-
   invited: [{type: ObjectId, ref: 'User'}],
   private: Boolean, 
 })
