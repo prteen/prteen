@@ -22,7 +22,7 @@ module.exports = async function(port, callback) {
   app.get("/favicon.ico", (_req, res) => {
     console.log("favicon")
     res.set("Content-Type", "image/x-icon")
-    fs.createReadStream("../res/favicon.ico").pipe(res)
+    fs.createReadStream("res/favicon.ico").pipe(res)
   })
 
   app.listen(port, callback)
