@@ -1,15 +1,16 @@
-const {sign} = require('jsonwebtoken');
+const { sign } = require('jsonwebtoken')
+const { auth } = require('../../settings')
 
 // creates a JWT token that expires in 10 minutes
 const create_access_token = (id) => {
-  return sign({id}, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: 10 * 60,
+  return sign({id}, auth.access_token_secret, {
+    expiresIn: 100000000 * 60,
   })
 }
 
 // creates a JWT refresh token that expires in 7 days
 const create_refresh_token = (id) => {
-  return sign({id}, process.env.REFRESH_TOKEN_SECRET, {
+  return sign({id}, auth.refresh_token_secret, {
     expiresIn: "7d",
   })
 }
