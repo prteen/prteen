@@ -49,6 +49,27 @@ const crud_organizer = new Crud(
       title: null
     },
     overrides: {
+      "create": (parent, router, route, validator) => {
+        console.log(` --> creating operation POST @ ${route}/ [protected]`)
+        router.post("/", protected, async (req, res) => {
+          try {
+            let obj = new parent.model(req.body)
+            obj.organizer = req.user._id
+            await obj.save()
+            return res.status(200).json({
+              message: "Successfully created new obj",
+              type: "success",
+            })
+          }
+          catch (error) {
+            return res.status(500).json({
+              message: "Failed to create new obj",
+              type: "error",
+              error: error
+            })
+          }
+        })
+      },
       "update": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
           console.log(` --> creating operation PUT @ ${route}/${id_symb} [protected]`)
