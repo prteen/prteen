@@ -12,7 +12,7 @@ const user_crud = new Crud(
       to: null
     },
     overrides: {
-      "create": (parent, router, route, validator) => {
+      create: (parent, router, route, validator) => {
         console.log(` --> creating operation POST @ ${route}/ [protected]`)
         router.post("/", protected, async (req, res) => {
           let from = req.user._id
@@ -50,42 +50,12 @@ const user_crud = new Crud(
               console.log(err)
             })
         })
-      },
-      "read": (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ ${route}/:id [protected]`)
-        router.get("/:id", protected, (req, res) => {
-          let id = req.params.id
+      }, 
+      read_all: (parent, router, route, validator) => {
+        console.log(` --> creating operation GET @ / [protected]`)
+        router.get("/", protected, (req, res) => {
           let user = req.user._id
-          Friendship.findById(id)
-            .then(friendship => {
-              if (friendship.from == user || friendship.to == user) {
-                res.json(friendship)
-              } else {
-                res.status(403).json({error: "Forbidden"})
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            })
-        })
-      },
-      "read_all": (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ ${route}/sent [protected]`)
-        router.get("/view/sent", protected, (req, res) => {
-          let user = req.user._id
-          Friendship.find({from: user})
-            .then(friendships => {
-              res.json(friendships)
-            })
-            .catch(err => {
-              console.log(err)
-            })
-        })
-
-        console.log(` --> creating operation GET @ ${route}/received [protected]`)
-        router.get("/view/received", protected, (req, res) => {
-          let user = req.user._id
-          Friendship.find({to: user})
+          Friendship.find({$or: [{from: user}, {to: user}]})
             .then(friendships => {
               res.json(friendships)
             })
@@ -94,9 +64,9 @@ const user_crud = new Crud(
             })
         })
       },
-      "update": (parent, router, route, validator) => {
-        console.log(` --> creating operation PUT @ ${route}/:id [protected]`)
-        router.put("/:id", protected, (req, res) => {
+      update: (parent, router, route, validator) => {
+        console.log(` --> creating operation PUT @ ${route}/id/:id [protected]`)
+        router.put("/id/:id", protected, (req, res) => {
           let id = req.params.id
           let user = req.user._id
           let status = req.body.status
@@ -105,7 +75,12 @@ const user_crud = new Crud(
               if (friendship == null) {
                 return res.status(400).json({error: "Friendship does not exist"})
               }
-              if (friendship.to.equals(user) && friendship.status == "pending") {
+              if(friendship.from.equals(user)) {
+                return res.status(403).json({error: "Cannot modify sent friendship request."})
+              } else if (friendship.to.equals(user)) {
+                if (friendship.status != "pending") {
+                  return res.status(400).json({error: "Friendship request has already been accepted/rejected"})
+                }
                 if (status != "accepted" && status != "rejected") {
                   return res.status(400).json({error: "Invalid status", status: status})
                 }
@@ -115,19 +90,17 @@ const user_crud = new Crud(
                   .then(friendship => {
                     res.json(friendship)
                   })
-                  .catch(err => {
-                    console.log(err)
-                  })
               } else {
                 res.status(403).json({error: "Forbidden"})
               }
             })
             .catch(err => {
               console.log(err)
+              res.status(500).json({error: "Internal server error", obj: err})
             })
         })
       },
-      "delete": (parent, router, route, validator) => {
+      delete: (parent, router, route, validator) => {
         console.log(` --> creating operation DELETE @ ${route}/:id [protected]`)
         router.delete("/:id", protected, (req, res) => {
           let id = req.params.id
@@ -150,7 +123,7 @@ const user_crud = new Crud(
                   })
               } else if (friendship.to.equals(user)) { 
                 if (friendship.status == "pending") {
-                  return res.status(400).json({error: "Cannot delete pending friendship, can only accept or reject"})
+                  return res.status(400).json({error: "Cannot delete pending friendship"})
                 }
                 friendship.deleteOne()
                   .then(friendship => {
@@ -159,7 +132,7 @@ const user_crud = new Crud(
                   .catch(err => {
                     console.log(err)
                   })
-              }else {
+              } else {
                 res.status(403).json({error: "Forbidden"})
               }
             })
