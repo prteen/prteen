@@ -21,7 +21,10 @@ const PartySchema = new Schema({
     ref: 'User'
   }],
   invited: [{type: ObjectId, ref: 'User'}],
-  private: Boolean, 
+  private: {
+    type: Boolean, 
+    required: true
+  },
 })
 
 const Party = model('Party', PartySchema)
