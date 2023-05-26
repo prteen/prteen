@@ -20,6 +20,7 @@ module.exports = new Crud(
             return res.status(200).json({
               message: "Successfully created new obj",
               type: "success",
+              id: obj._id
             })
           }
           catch (error) {
@@ -100,13 +101,14 @@ module.exports = new Crud(
                   type: "error"
                 })
               }
-              await obj.remove()
+              await parent.model.deleteOne({_id: obj._id})
               return res.status(200).json({
                 message: "Object deleted",
                 type: "success",
                 obj
               })
             } catch (error) {
+              throw error
               return res.status(500).json({
                 message: "Failed to delete obj",
                 type: "error",
