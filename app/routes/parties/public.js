@@ -13,9 +13,11 @@ module.exports = new Crud(
       "read_all": (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ ${route}/`)
         router.get("/", (req, res) => {
-          // this sounds dumb, but its needed if the object haven't a "private" field. If it hasn't, then assume it is public
           console.log(req.query)
+          // this sounds dumb, but its needed if the object haven't a "private" field. If it hasn't, then assume it is public
           let query = {private: {"$ne": true}}
+
+          // parse tags
           if("tags" in req.query){
             query.tags = {}
 
@@ -33,12 +35,24 @@ module.exports = new Crud(
             if(exclude.length > 0) query.tags.$nin = exclude
             if(Object.keys(query.tags).length === 0) delete query.tags
           }
+
+          // parse date
+          if("date" in req.query){
+            const date = new Date(req.query.date)
+            console.log(date)
+            if(date >= (new Date()).setTime(0)){
+              // check if date in db is greater than query date and less than query date + 24 hours
+              query.date = {"$gte": date, "$lt": new Date(date.getTime() + 24 * 60 * 60 * 1000)}
+            }
+          }
+
           console.log(query)
           parent.model.find(query)
             .then(objs => {
               return res.status(200).json(objs)
             })
             .catch(error => {
+              //throw error
               return res.status(500).json({
                 message: "Failed to retrieve objs",
                 type: "error",
