@@ -50,10 +50,9 @@ router.post("/signin", async (req, res) => {
     const {username, password} = req.body;
 
     const user = await User.findOne({ username: username });
-
-    // check if user exists
+    // check if user existatus
     if (!user)
-      return res.status(500).json({
+      return res.status(400).json({
         message: "User not found",
         type: "error"
       })
@@ -62,7 +61,7 @@ router.post("/signin", async (req, res) => {
 
     // if the passwords hashes don't match
     if (!is_correct)
-      return res.status(500).json({
+      return res.status(400).json({
         message: "Password is incorrect",
         type: "error"
         })
