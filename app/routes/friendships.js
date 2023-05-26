@@ -50,25 +50,7 @@ const user_crud = new Crud(
               console.log(err)
             })
         })
-      },
-      /* read: (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ ${route}/:id [protected]`)
-        router.get("/:id", protected, (req, res) => {
-          let id = req.params.id
-          let user = req.user._id
-          Friendship.findById(id)
-            .then(friendship => {
-              if (friendship.from == user || friendship.to == user) {
-                res.json(friendship)
-              } else {
-                res.status(403).json({error: "Forbidden"})
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            })
-        })
-      }, */
+      }, 
       read_all: (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ / [protected]`)
         router.get("/", protected, (req, res) => {
@@ -81,20 +63,8 @@ const user_crud = new Crud(
               console.log(err)
             })
         })
-
-        // console.log(` --> creating operation GET @ ${route}/received [protected]`)
-        // router.get("/view/received", protected, (req, res) => {
-        //   let user = req.user._id
-        //   Friendship.find({to: user})
-        //     .then(friendships => {
-        //       res.json(friendships)
-        //     })
-        //     .catch(err => {
-        //       console.log(err)
-        //     })
-        // })
       },
-      "update": (parent, router, route, validator) => {
+      update: (parent, router, route, validator) => {
         console.log(` --> creating operation PUT @ ${route}/id/:id [protected]`)
         router.put("/id/:id", protected, (req, res) => {
           let id = req.params.id
@@ -130,7 +100,7 @@ const user_crud = new Crud(
             })
         })
       },
-      "delete": (parent, router, route, validator) => {
+      delete: (parent, router, route, validator) => {
         console.log(` --> creating operation DELETE @ ${route}/:id [protected]`)
         router.delete("/:id", protected, (req, res) => {
           let id = req.params.id
