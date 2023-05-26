@@ -5,17 +5,18 @@ class CrudSettings {
     this.identifiers = data.identifiers || {}
     this.exclude = data.exclude || []
     this.overrides = data.overrides || {}
+    this.validators = data.validators || {}
   }
 
   forIdentifiers(callback) {
     Object.keys(this.identifiers).forEach((key) => {
-      callback(key, this.identifiers[key] || key)
+    callback(key, this.identifiers[key] || key)
     })
   }
 }
 
 const operations = {
-  create(parent, router, route) {
+  create(parent, router, route, validator) {
     console.log(` --> creating operation POST @ ${route}`)
     router.post("/", async (req, res) => {
       try {
@@ -35,7 +36,7 @@ const operations = {
     })
   },
   
-  read(parent, router, route) {
+  read(parent, router, route, validator) {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       console.log(` --> creating operation GET @ ${route}/${id_symb}`)
       router.get(`/${id_symb}/:id`, (req, res) => {
@@ -50,7 +51,7 @@ const operations = {
     })
   },
 
-  read_all(parent, router, route) {
+  read_all(parent, router, route, validator) {
     console.log(` --> creating operation GET @ ${route}/`)
     router.get("/", (_req, res) => {
       parent.model.find()
@@ -69,16 +70,16 @@ const operations = {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       router.put(`/${id_symb}/:id`, async (req, res) => {
         try {
-          if(validation !== undefined) {
-            const validation = validator(req, res)
-            if(!validation.ok) {
-              return res.status(401).json({
-                message: "Unauthorized",
-                type: "error",
-                error: validation.error
-              })
-            }
-          }
+          // if(validation !== undefined) {
+          //   const validation = validator(req, res)
+          //   if(!validation.ok) {
+          //     return res.status(401).json({
+          //       message: "Unauthorized",
+          //       type: "error",
+          //       error: validation.error
+          //     })
+          //   }
+          // }
           console.log(req.body)
           let query = {}
           query[id_db] = req.params.id
@@ -111,7 +112,7 @@ const operations = {
     })
   },
 
-  delete(parent, router, route) {
+  delete(parent, router, route, validator) {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       console.log(` --> creating operation DELETE @ ${route}/${id_symb}`)
       router.delete(`/${id_symb}/:id`, async (req, res) => {
@@ -165,7 +166,7 @@ class Crud {
       if(operation in this.settings.overrides) {
         this.settings.overrides[operation](this, router, route)
       } else {
-        operations[operation](this, router, route)
+        operations[operation](this, router, route, this.settings.validators[operation])
       }
     })
 
