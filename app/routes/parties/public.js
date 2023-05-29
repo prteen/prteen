@@ -5,10 +5,6 @@ const { Crud } = require("../../interfaces/crud")
 module.exports = new Crud(
   Party,
   {
-    identifiers: {
-      _id: "id",
-      title: null
-    },
     overrides: {
       "read_all": (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ ${route}/`)
@@ -64,7 +60,7 @@ module.exports = new Crud(
       "read": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
           console.log(` --> creating operation GET @ ${route}/${id_symb}`)
-          router.get(`/${id_symb}/:id`, (req, res) => {
+          router.get(`/${id_symb}:id`, (req, res) => {
             let query = {}
             query[id_db] = req.params.id
             parent.model.findOne(query)

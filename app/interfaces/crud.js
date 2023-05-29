@@ -2,7 +2,7 @@ const express = require("express")
 
 class CrudSettings {
   constructor(data) {
-    this.identifiers = data.identifiers || {}
+    this.identifiers = data.identifiers || {"": null}
     this.exclude = data.exclude || []
     this.overrides = data.overrides || {}
     this.validators = data.validators || {}
@@ -13,7 +13,7 @@ class CrudSettings {
   }
 
   forIdentifiers(callback) {
-    Object.keys(this.identifiers).forEach((key) => callback(key, this.identifiers[key] || key))
+    Object.keys(this.identifiers).forEach((key) => callback(key, (this.identifiers[key] || key) + "/"))
   }
 }
 
@@ -41,7 +41,7 @@ const operations = {
   read(parent, router, route, validator) {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       console.log(` --> creating operation GET @ ${route}/${id_symb}`)
-      router.get(`/${id_symb}/:id`, (req, res) => {
+      router.get(`/${id_symb}:id`, (req, res) => {
         let query = {}
         query[id_db] = req.params.id
         parent.model.findOne(query)
@@ -70,7 +70,7 @@ const operations = {
     console.log(` --> creating operation PUT @ ${route}/`)
 
     parent.settings.forIdentifiers((id_db, id_symb) => {
-      router.put(`/${id_symb}/:id`, async (req, res) => {
+      router.put(`/${id_symb}:id`, async (req, res) => {
         try {
           // if(validation !== undefined) {
           //   const validation = validator(req, res)
@@ -117,7 +117,7 @@ const operations = {
   delete(parent, router, route, validator) {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       console.log(` --> creating operation DELETE @ ${route}/${id_symb}`)
-      router.delete(`/${id_symb}/:id`, async (req, res) => {
+      router.delete(`/${id_symb}:id`, async (req, res) => {
         try {
           let query = {}
           query[id_db] = req.params.id

@@ -5,10 +5,6 @@ const { protected } = require("../../utils/protected")
 module.exports = new Crud(
   Party, 
   { 
-    identifiers: {
-      _id: "id",
-      title: null
-    },
     overrides: {
       "read_all": (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ ${route}/`)

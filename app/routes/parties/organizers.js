@@ -5,10 +5,6 @@ const { protected } = require("../../utils/protected")
 module.exports = new Crud(
   Party,
   {
-    identifiers: {
-      _id: "id",
-      title: null
-    },
     overrides: {
       "create": (parent, router, route, validator) => {
         console.log(` --> creating operation POST @ ${route}/ [protected]`)
@@ -35,7 +31,7 @@ module.exports = new Crud(
       "update": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
           console.log(` --> creating operation PUT @ ${route}/${id_symb} [protected]`)
-          router.put(`/${id_symb}/:id`, protected, async (req, res) => {
+          router.put(`/${id_symb}:id`, protected, async (req, res) => {
             try {
               let query = {}
               query[id_db] = req.params.id
@@ -77,7 +73,7 @@ module.exports = new Crud(
       "delete": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
           console.log(` --> creating operation DELETE @ ${route}/${id_symb} [protected]`)
-          router.delete(`/${id_symb}/:id`, protected, async (req, res) => {
+          router.delete(`/${id_symb}:id`, protected, async (req, res) => {
             try {
               let query = {}
               query[id_db] = req.params.id
