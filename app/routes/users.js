@@ -1,6 +1,8 @@
-const {User} = require("../models/user")
-const {Crud, CrudSettings} = require("../interfaces/crud")
+const { User } = require("../models/user")
+const { Crud } = require("../interfaces/crud")
 
+
+// todo: this will be eventually deleted since direct access to users will be disabled 
 module.exports = new Crud(
   User,
   {
@@ -9,7 +11,6 @@ module.exports = new Crud(
       email: null,
       _id: "id"
     },
-    // exclude: ["read_all"],
     overrides: {
       read: (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ ${route}/username`)
@@ -22,6 +23,7 @@ module.exports = new Crud(
             })
         })
       }
-    }
+    },
+    // exclude: "__all__"
   }
 )
