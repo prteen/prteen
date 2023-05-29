@@ -69,10 +69,9 @@ module.exports = new Crud(
             query[id_db] = req.params.id
             parent.model.findOne(query)
               .then(obj => {
-                console.log(obj)
-                if(obj.private){
-                  return res.status(403).json({
-                    message: "Forbidden",
+                if(obj === null || obj.private) {
+                  return res.status(404).json({
+                    message: "Object not found",
                     type: "error"
                   })
                 }
@@ -85,7 +84,7 @@ module.exports = new Crud(
         }) 
       },
     },
-    exclude: ["update", "delete", "create"]
+    exclude: "__all__"
   }
 )
 
