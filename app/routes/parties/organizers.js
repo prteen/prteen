@@ -40,19 +40,12 @@ module.exports = new Crud(
               let query = {}
               query[id_db] = req.params.id
               let obj = await parent.model.findOne(query)
-              if(obj === null) {
+              if(obj === null || !obj.organizer.equals(req.user._id)) {
                 return res.status(404).json({
                   message: "Object not found",
                   type: "error"
                 })
               }
-              if(!obj.organizer.equals(req.user._id)) {
-                return res.status(403).json({
-                  message: "Forbidden",
-                  type: "error"
-                })
-              }
-              
               for(const field of ["organizer", "_id"]) {
                 if(field in req.body) {
                   return res.status(409).json({
@@ -89,15 +82,9 @@ module.exports = new Crud(
               let query = {}
               query[id_db] = req.params.id
               let obj = await parent.model.findOne(query)
-              if(obj === null) {
+              if(obj === null || !obj.organizer.equals(req.user._id)) {
                 return res.status(404).json({
                   message: "Object not found",
-                  type: "error"
-                })
-              }
-              if(!obj.organizer.equals(req.user._id)) {
-                return res.status(403).json({
-                  message: "Forbidden",
                   type: "error"
                 })
               }
