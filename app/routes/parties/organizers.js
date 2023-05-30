@@ -70,6 +70,49 @@ module.exports = new Crud(
           })
         })
       },
+      "read_all": (parent, router, route, validator) => {
+        parent.settings.forIdentifiers((id_db, id_symb) => {
+          console.log(` --> creating operation GET @ ${route}/${id_symb} [protected]`)
+          router.get(`/`, protected, async (req, res) => {
+            try {
+              let query = {"organizer": req.user._id}
+              let objs = await parent.model.find(query)
+              return res.status(200).json(objs)
+            } catch (error) {
+              return res.status(500).json({
+                message: "Failed to get objs",
+                type: "error",
+                error: error
+              })
+            }
+          })
+        })
+      },
+      "read": (parent, router, route, validator) => {
+        parent.settings.forIdentifiers((id_db, id_symb) => {
+          console.log(` --> creating operation GET @ ${route}/${id_symb} [protected]`)
+          router.get(`/${id_symb}:id`, protected, async (req, res) => {
+            try {
+              let query = {}
+              query[id_db] = req.params.id
+              let obj = await parent.model.findOne(query)
+              if(obj === null || !obj.organizer.equals(req.user._id)) {
+                return res.status(404).json({
+                  message: "Object not found",
+                  type: "error"
+                })
+              }
+              return res.status(200).json(obj) 
+            } catch (error) {
+              return res.status(500).json({
+                message: "Failed to get obj",
+                type: "error",
+                error: error
+              })
+            }
+          })
+        })
+      },
       "delete": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
           console.log(` --> creating operation DELETE @ ${route}/${id_symb} [protected]`)
