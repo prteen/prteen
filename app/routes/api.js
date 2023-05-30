@@ -5,15 +5,16 @@ const {public: parties_public, users: parties_users, organizers: parties_organiz
 const users = require("./users")
 const auth = require("./auth")
 const friendships = require("./friendships")
-const image = require("./image")
+const images = require("./image")
 
 parties_public.register(router, "/parties")
 parties_users.register(router, "/parties/users")
 parties_organizers.register(router, "/parties/organizers")
 users.register(router, "/users")
 friendships.register(router, "/friendships")
+images.register(router, "/images")
 
-router.use("/images", image)
+// router.use("/images", image)
 router.use("/auth", auth)
 
 router.get("/", (_req, res) => {

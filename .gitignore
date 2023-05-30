@@ -1,6 +1,5 @@
 # user defined
 *.pem
-uploads/
 
 # Logs
 logs
