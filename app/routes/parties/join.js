@@ -11,7 +11,7 @@ module.exports = new Crud(
       update: (parent, router, route, validator) => {
         console.log(` --> creating operation POST @ ${route}/\{partyId\}/join [protected]`)
         console.log(router)
-        router.post("/", protected, async (req, res) => {
+        router.post("/:id", protected, async (req, res) => {
           try {
             let party = await parent.model.findById(req.params.id)
             if(party === null) {

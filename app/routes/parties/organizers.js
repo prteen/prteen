@@ -53,7 +53,7 @@ module.exports = new Crud(
 
 
               Object.assign(obj, req.body)
-              obj.save()
+              await obj.save()
               return res.status(200).json({
                 message: "Object updated",
                 type: "success",

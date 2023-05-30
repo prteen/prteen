@@ -7,13 +7,11 @@ const auth = require("./auth")
 const friendships = require("./friendships")
 const { protected } = require("../utils/protected")
 
-let parties_router = parties.public.settings.router
-// first we register other routes for /parties/, then we register the /parties/:id route
-parties.users.register(parties_router, "/users")
-parties.organizers.register(parties_router, "/organizers")
 parties.public.register(router, "/parties")
-parties.join.register(parties.public.settings.read_router, "/join")
-console.log(parties_router.stack)
+
+parties.users.register(router, "/parties/users")
+parties.organizers.register(router, "/parties/organizers")
+parties.join.register(router, "/parties/join")
 
 users.register(router, "/users")
 

@@ -6,7 +6,7 @@ class CrudSettings {
     this.exclude = data.exclude || []
     this.overrides = data.overrides || {}
     this.validators = data.validators || {}
-    this.router = data.router || express.Router()
+    this.router = data.router || express.Router({mergeParams: true})
 
     if(data.exclude === "__all__"){
       this.exclude = Object.keys(operations)
