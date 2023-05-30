@@ -52,7 +52,6 @@ const operations = {
   read(parent, router, route, validator) {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       console.log(` --> creating operation GET @ ${route}/${id_symb}`)
-console.log(`==> /${id_symb}:id`)
       router.get(`/${id_symb}:id`, (req, res) => {
         let query = {}
         query[id_db] = req.params.id
