@@ -2,10 +2,11 @@ const express = require("express")
 
 class CrudSettings {
   constructor(data) {
-    this.identifiers = data.identifiers || {"": null}
+    this.identifiers = data.identifiers || {_id: ""}
     this.exclude = data.exclude || []
     this.overrides = data.overrides || {}
     this.validators = data.validators || {}
+    this.router = data.router || express.Router()
 
     if(data.exclude === "__all__"){
       this.exclude = Object.keys(operations)
@@ -13,7 +14,17 @@ class CrudSettings {
   }
 
   forIdentifiers(callback) {
-    Object.keys(this.identifiers).forEach((key) => callback(key, (this.identifiers[key] || key) + "/"))
+    Object.keys(this.identifiers).forEach((key) => {
+      let value = this.identifiers[key]
+      if(value === null){
+        value = key
+      }
+      if(value !== ""){
+        value += "/"
+      }
+
+      callback(key, value)
+    })
   }
 }
 
@@ -41,6 +52,7 @@ const operations = {
   read(parent, router, route, validator) {
     parent.settings.forIdentifiers((id_db, id_symb) => {
       console.log(` --> creating operation GET @ ${route}/${id_symb}`)
+console.log(`==> /${id_symb}:id`)
       router.get(`/${id_symb}:id`, (req, res) => {
         let query = {}
         query[id_db] = req.params.id
@@ -158,20 +170,19 @@ class Crud {
   }
 
   register(parent, route) {
-    let router = express.Router()
-
     Object.keys(operations).forEach((operation) => {
       if(operation in this.settings.overrides) {
         console.log(`=> Creating [overriden] operation ${operation} for route ${route}`)
-        this.settings.overrides[operation](this, router, route)
+        this.settings.overrides[operation](this, this.settings.router, route)
         return
       } else if(!this.settings.exclude.includes(operation)) {
         console.log(`=> Creating [automatic] operation ${operation} for route ${route}`)
-        operations[operation](this, router, route, this.settings.validators[operation])
+        operations[operation](this, this.settings.router, route, this.settings.validators[operation])
       }
     })
 
-    parent.use(route, router)
+    parent.use(route, this.settings.router)
+    return this.settings.router
   } 
 } 
 

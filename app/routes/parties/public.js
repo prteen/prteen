@@ -1,10 +1,12 @@
 const { Party } = require("../../models/party")
 const { Crud } = require("../../interfaces/crud")
+const { Router } = require("express")
 
 
 module.exports = new Crud(
   Party,
   {
+    router: Router({mergeParams: true}),
     overrides: {
       "read_all": (parent, router, route, validator) => {
         console.log(` --> creating operation GET @ ${route}/`)
@@ -58,25 +60,25 @@ module.exports = new Crud(
         })
       },
       "read": (parent, router, route, validator) => {
-        parent.settings.forIdentifiers((id_db, id_symb) => {
-          console.log(` --> creating operation GET @ ${route}/${id_symb}`)
-          router.get(`/${id_symb}:id`, (req, res) => {
-            let query = {}
-            query[id_db] = req.params.id
-            parent.model.findOne(query)
-              .then(obj => {
-                if(obj === null || obj.private) {
-                  return res.status(404).json({
-                    message: "Object not found",
-                    type: "error"
-                  })
-                }
-                return res.status(200).json(obj)
-              })
-              .catch(err => {
-                console.log(err)
-              })
-          })
+        parent.settings.read_router = internal = Router()
+        router.use("/:id", internal)
+        console.log(` --> creating operation GET @ ${route}/:id`)
+        internal.get(`/`, (req, res) => {
+          let query = {}
+          query._id = req.params.id
+          parent.model.findOne(query)
+            .then(obj => {
+              if(obj === null || obj.private) {
+                return res.status(404).json({
+                  message: "Object not found",
+                  type: "error"
+                })
+              }
+              return res.status(200).json(obj)
+            })
+            .catch(err => {
+              console.log(err)
+            })
         }) 
       },
     },
