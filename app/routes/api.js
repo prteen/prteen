@@ -5,7 +5,7 @@ const parties = require("./parties")
 const users = require("./users")
 const auth = require("./auth")
 const friendships = require("./friendships")
-const { protected } = require("../utils/protected")
+const images = require("./image")
 
 parties.public.register(router, "/parties")
 
@@ -16,7 +16,9 @@ parties.join.register(router, "/parties/join")
 users.register(router, "/users")
 
 friendships.register(router, "/friendships")
+images.register(router, "/images")
 
+// router.use("/images", image)
 router.use("/auth", auth)
 
 router.get("/", (_req, res) => {

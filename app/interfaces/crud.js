@@ -171,7 +171,7 @@ class Crud {
   register(parent, route) {
     Object.keys(operations).forEach((operation) => {
       if(operation in this.settings.overrides) {
-        console.log(`=> Creating [overriden] operation ${operation} for route ${route}`)
+        console.log(`=> Creating [overridden] operation ${operation} for route ${route}`)
         this.settings.overrides[operation](this, this.settings.router, route)
         return
       } else if(!this.settings.exclude.includes(operation)) {
