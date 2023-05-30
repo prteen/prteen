@@ -1,8 +1,10 @@
-const multer = require('multer')
+const multer = require('multer');
+const router = require('express').Router();
 const {Image} = require('../models/image');
-const protected = require('../utils/protected');
+const { protected } = require('../utils/protected');
 const { Crud } = require('../interfaces/crud.js')
 
+const upload = multer({storage: multer.memoryStorage()});
 
 const crud = new Crud(
   Image,
@@ -12,10 +14,8 @@ const crud = new Crud(
     },
     overrides: {
       create: (parent, router, route, validator) => {
-        console.log(` --> creating operation POST @ ${route}/upload [protected]`)
-        const upload = multer({storage: multer.memoryStorage()})
-        console.log(upload)
-        router.post("/upload", protected, upload.single('image'), (req, res) => {
+        console.log(` --> creating operation POST @ ${route}/ [protected]`)
+        router.post('/', protected, upload.single('image'), (req, res) => {
           const image = new Image({
             img: {
               data: req.file.buffer,
@@ -25,22 +25,22 @@ const crud = new Crud(
 
           image.save()
             .then((result) => {
-              return res.status(200).json({
+              res.status(200).json({
                 success: true,
                 document: result
               })
             }
-            ).catch((err) => { 
-              return res.status(500).json({
+            ).catch((err) => 
+              res.status(500).json({
                 success: false,
                 error: err,
                 message: 'Error uploading image'
-              })}
+              })
             )
         })
       },
-      "read_all": (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ ${route}/`)
+      read_all: (parent, router, route, validator) => {
+        console.log(` --> creating operation GET @ ${route}/:id`)
         router.get('/', (_req, res) => {
         Image.find({}) 
           .then((data, err) => {
@@ -57,7 +57,25 @@ const crud = new Crud(
           })
         })
       },
-      "delete": (parent, router, route, validator) => {
+      read: (parent, router, route, validator) => {
+        console.log(` --> creating operation GET @ ${route}/:id [protected]`)
+        router.get('/:id', protected, (req, res) => {
+          Image.findById(req.params.id)
+            .then((result) => {
+              res.status(200).json({
+                success: true,
+                document: result
+              })
+            })
+            .catch((err) => {
+              res.status(500).json({
+                success: false,
+                error: err
+              })
+            })
+        }) 
+      },
+      delete: (parent, router, route, validator) => {
         console.log(` --> creating operation DELETE @ ${route}/:id [protected]`)
         router.delete("/:id", protected, (req, res) => {
           let id = req.params.id
