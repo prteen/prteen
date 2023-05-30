@@ -25,5 +25,7 @@ module.exports = async function(port, callback) {
     fs.createReadStream("res/favicon.ico").pipe(res)
   })
 
+  app.set("view engine", "ejs")
+
   app.listen(port, callback)
 } 
