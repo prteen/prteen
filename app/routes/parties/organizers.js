@@ -13,8 +13,8 @@ module.exports = new Crud(
             let obj = new parent.model(req.body)
             obj.organizer = req.user._id
             await obj.save()
-            return res.status(200).json({
-              message: "Successfully created new obj",
+            return res.status(201).json({
+              message: "Party created successfully",
               type: "success",
               id: obj._id
             })
@@ -38,14 +38,14 @@ module.exports = new Crud(
               let obj = await parent.model.findOne(query)
               if(obj === null || !obj.organizer.equals(req.user._id)) {
                 return res.status(404).json({
-                  message: "Object not found",
+                  message: "Party not found",
                   type: "error"
                 })
               }
               for(const field of ["organizer", "_id"]) {
                 if(field in req.body) {
                   return res.status(409).json({
-                    message: `Read only field: ${field}`,
+                    message: `Read-only field: ${field}`,
                     type: "error"
                   })
                 }
@@ -55,12 +55,11 @@ module.exports = new Crud(
               Object.assign(obj, req.body)
               await obj.save()
               return res.status(200).json({
-                message: "Object updated",
+                message: "Party updated",
                 type: "success",
-                obj
+                obj: obj 
               })
             } catch (error) {
-              throw error
               return res.status(500).json({
                 message: "Failed to update obj",
                 type: "error",
@@ -93,12 +92,12 @@ module.exports = new Crud(
           console.log(` --> creating operation GET @ ${route}/${id_symb} [protected]`)
           router.get(`/${id_symb}:id`, protected, async (req, res) => {
             try {
-              let query = {}
+              let query = {organizer: req.user._id}
               query[id_db] = req.params.id
               let obj = await parent.model.findOne(query)
               if(obj === null || !obj.organizer.equals(req.user._id)) {
                 return res.status(404).json({
-                  message: "Object not found",
+                  message: "Party not found",
                   type: "error"
                 })
               }
@@ -134,7 +133,6 @@ module.exports = new Crud(
                 obj
               })
             } catch (error) {
-              throw error
               return res.status(500).json({
                 message: "Failed to delete obj",
                 type: "error",

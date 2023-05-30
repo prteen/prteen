@@ -71,7 +71,7 @@ module.exports = new Crud(
             .then(obj => {
               if(obj === null || obj.private) {
                 return res.status(404).json({
-                  message: "Object not found",
+                  message: "Party not found",
                   type: "error"
                 })
               }

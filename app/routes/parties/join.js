@@ -10,8 +10,13 @@ module.exports = new Crud(
     overrides: {
       update: (parent, router, route, validator) => {
         console.log(` --> creating operation POST @ ${route}/\{partyId\}/join [protected]`)
-        router.post("/:id", protected, async (req, res) => {
+        router.put("/:id", protected, async (req, res) => {
           try {
+            let success = {
+              message: "Operation successful",
+              type: "success",
+              id: party._id
+            }
             let party = await parent.model.findById(req.params.id)
             if(party === null) {
               return res.status(404).json({
@@ -27,19 +32,19 @@ module.exports = new Crud(
             }
             if(req.body.action === "join") {
               if(party.participants.includes(req.user._id)) {
-                return res.status(409).json({
-                  message: "You are already partecipating in this party",
-                  type: "error"
-                })
+                return success
               } else {
+                if(party.participants.lenght == party.maxParticipants) {
+                  return res.status(409).json({
+                    message: "Party is full",
+                    type: "error"
+                  })
+                }
                 party.participants.push(req.user._id)
               }
             } else if(req.body.action === "leave") {
               if(!party.participants.includes(req.user._id)) {
-                return res.status(409).json({
-                  message: "You are not partecipating in this party",
-                  type: "error"
-                })
+                return success 
               } else {
                 party.participants.pull(req.user._id)
               }
@@ -50,11 +55,7 @@ module.exports = new Crud(
               })
             }
             await party.save()
-            return res.status(200).json({
-              message: "Operation successful",
-              type: "success",
-              id: party._id
-            })
+            return res.status(200).json(success)
           } catch (error) {
             return res.status(500).json({
               message: "Failed to update obj",

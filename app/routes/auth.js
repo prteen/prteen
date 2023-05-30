@@ -12,15 +12,16 @@ const {
 
 const {User} = require('../models/user');
 
-router.post("/signup", async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const user = await User.findOne({ username: username });
 
     if (user)
-      return res.status(500).json({
+      return res.status(409).json({
         message: "User already exists",
-        type: "warning"
+        type: "error",
+        username: user.username
     }) 
 
     const password_hash = await hash(password, 10)
@@ -32,7 +33,7 @@ router.post("/signup", async (req, res) => {
 
     await new_user.save()
 
-    res.status(200).json({
+    res.status(201).json({
       message: "User created successfully",
       type: "success"
     })
@@ -45,14 +46,14 @@ router.post("/signup", async (req, res) => {
   }
 })
 
-router.post("/signin", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const {username, password} = req.body;
 
     const user = await User.findOne({ username: username });
     // check if user existatus
     if (!user)
-      return res.status(400).json({
+      return res.status(409).json({
         message: "User not found",
         type: "error"
       })
@@ -60,12 +61,12 @@ router.post("/signin", async (req, res) => {
     const is_correct = await compare(password, user.password)
 
     // if the passwords hashes don't match
-    if (!is_correct)
+    if (!is_correct) {
       return res.status(400).json({
-        message: "Password is incorrect",
+        message: "Incorrect password",
         type: "error"
-        })
-
+      })
+    }
     // create refresh and access token
     const access_token = create_access_token(user._id)
     const refresh_token = create_refresh_token(user._id)
@@ -101,8 +102,8 @@ router.post("/refresh_token", async (req, res) => {
   try {
     const {refresh_token} = req.cookies
     if (!refresh_token)
-      return res.status(500).json({
-        message: "No refresh token provided",
+      return res.status(400).json({
+        message: "Missing refresh token",
         type: "error"
     })
 
@@ -111,8 +112,8 @@ router.post("/refresh_token", async (req, res) => {
     try {
       id = await verify(refresh_token, process.env.REFRESH_TOKEN_SECRET).id
     } catch (err) {
-      return res.status(500).json({
-        message: "Refresh token is invalid",
+      return res.status(401).json({
+        message: "Invalid refresh token",
         type: "error"
       }) 
     }
@@ -136,8 +137,8 @@ router.post("/refresh_token", async (req, res) => {
     })
 
     if (user.refresh_token !== refresh_token)
-      return res.status(500).json({
-        message: "Refresh token is invalid",
+      return res.status(403).json({
+        message: "Refresh token expired",
         type: "error"
     })
 
@@ -148,7 +149,7 @@ router.post("/refresh_token", async (req, res) => {
     send_refresh_token(res, new_refresh_token)
     return res.status(200).json({
       access_token,
-      message: "Access token refreshed",
+      message: "Token refreshed",
       type: "success"
     })
 
