@@ -7,12 +7,48 @@ info:
 paths:
   /parties:
     get:
-      summary: Get a list of all parties
+      summary: Get a list of all public parties        
+      parameters:       
+        - in: query
+          name: tags
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: date
+          schema:
+            type: date
+      responses:
+        '200':
+          description: OK
+  /parties/{party_id}:
+    get:
+      summary: Get details of a specific public party
+      parameters:
+        - in: path
+          name: party_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Party not found
+  /parties/organizers/:
+    get:
+      summary: Get a list of all parties created by the user
+      security:
+        - BearerAuth: [organizer]
       responses:
         '200':
           description: OK
     post:
       summary: Create a new party
+      security:
+        - BearerAuth: [normal]
       requestBody:
         required: true
         content:
@@ -21,23 +57,29 @@ paths:
               $ref: '#/components/schemas/Party'
       responses:
         '201':
-          description: Created
-  /parties/{partyId}:
+          description: Party created successfully
+  /parties/organizers/{party_id}:
     get:
-      summary: Get details of a specific party
+      summary: Get details of a specific party created by the user
+      security:
+        - BearerAuth: [organizer]
       parameters:
-        - name: partyId
-          in: path
-          required: true
+        - in: path
+          name: party_id
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: OK
+        '404':
+          description: Party not found
     put:
-      summary: Update details of a specific party
+      summary: Update details of a specific party created by the user
+      security:
+        - BearerAuth: [organizer]
       parameters:
-        - name: partyId
+        - name: party_id
           in: path
           required: true
           schema:
@@ -50,26 +92,79 @@ paths:
               $ref: '#/components/schemas/Party'
       responses:
         '200':
-          description: OK
+          description: Party updated
+        '404':
+          description: Party not found
+        '409':
+          description: Read-only field
     delete:
       summary: Delete a specific party
+      security:
+        BearerAuth: [organizer]
       parameters:
-        - name: partyId
+        - name: party_id
           in: path
           required: true
           schema:
             type: string
       responses:
-        '204':
+        '200':
+          description: OK
+        '404':
           description: No Content
-  /users:
-    get:
-      summary: Get a list of all users
+  /parties/users:
+    get: 
+      summary: Get a list of all parties the user is participating in
+      security:
+        - BearerAuth: [participant]
+      responses:
+        '200':
+          description: OK 
+  /parties/join/{party_id}:
+    put:
+      summary: Join a party
+      security:
+        - BearerAuth: [normal]
+      parameters:
+        - name: party_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         '200':
           description: OK
+        '400':
+          description: Invalid action
+        '404':
+          description: Party not found
+        '409':
+          description: Party is full
+  /auth/login:
     post:
-      summary: Create a new user
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: User not found
+        '400':
+          description: Incorrect password
+  /auth/register:
+    post:
+      summary: Register user
       requestBody:
         required: true
         content:
@@ -78,47 +173,130 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '201':
-          description: Created
-  /users/{userId}:
-    get:
-      summary: Get details of a specific user
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-    put:
-      summary: Update details of a specific user
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
+          description: User created successfully
+        '409':
+          description: User already exists
+  /auth/signout:
+    post:
+      summary: Sign out user
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Logged Out
+  /auth/refresh_token:
+    post:
+      summary: Refresh user token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+        '400':
+          description: Missing refresh token
+        '401':
+          description: Invalid refresh token
+        '403':
+          description: Refresh token expired
+  /friendships:
+    get: 
+      summary: Get a list of all friends
+      security:
+        - BearerAuth: [normal]
       responses:
         '200':
           description: OK
-    delete:
-      summary: Delete a specific user
+    post: 
+      summary: Send a friend request
+      security:
+        - BearerAuth: [normal]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Friendship request sent
+        '400':
+          description: Invalid username
+        '404':
+          description: User not found
+        '409':
+          description: Frienship already exists
+  /friendships/{friendship_id}:
+    put: 
+      summary: Accept / Reject a friend request
+      security:
+        - BearerAuth: [normal]
       parameters:
-        - name: userId
+        - name: friendship_id
           in: path
           required: true
           schema:
             type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
       responses:
-        '204':
-          description: No Content
+        '200':
+          description: Friendship request updated
+        '400':
+          description: Invalid status
+        '404':
+          description: Friendship not found
+        '403':
+          description: Forbidden
+        '409':
+          description: Friendship request has already been accepted / rejected 
+    delete:
+      summary: Delete a friendship
+      security:
+        - BearerAuth: [normal]
+      parameters:
+        - name: friendship_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Friendship deleted
+        '400':
+          description: Cannot delete pending friendship request
+        '403':
+          description: Forbidden
+        '404':
+          description: Friendship not found
+        '409':
+          description: Cannot delete rejected friendship
 components:
   schemas:
     Party:
@@ -176,3 +354,13 @@ components:
               format: byte
             contentType:
               type: string
+    securitySchemes:
+      BearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+security:
+  - BearerAuth:
+    - organizer
+    - participant
+    - normal
