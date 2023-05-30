@@ -13,8 +13,7 @@ module.exports = new Crud(
         console.log(router)
         router.post("/", protected, async (req, res) => {
           try {
-            let party = await parent.model.findById(req.params.partyId)
-            console.log(req)
+            let party = await parent.model.findById(req.params.id)
             if(party === null) {
               return res.status(404).json({
                 message: "Party not found",
@@ -27,16 +26,33 @@ module.exports = new Crud(
                 type: "error"
               })
             }
-            if(party.participants.includes(req.user._id)) {
-              return res.status(409).json({
-                message: "You are already partecipating in this party",
+            if(req.body.action === "join") {
+              if(party.participants.includes(req.user._id)) {
+                return res.status(409).json({
+                  message: "You are already partecipating in this party",
+                  type: "error"
+                })
+              } else {
+                party.participants.push(req.user._id)
+              }
+            } else if(req.body.action === "leave") {
+              if(!party.participants.includes(req.user._id)) {
+                return res.status(409).json({
+                  message: "You are not partecipating in this party",
+                  type: "error"
+                })
+              } else {
+                party.participants.pull(req.user._id)
+              }
+            } else {
+              return res.status(400).json({
+                message: "Invalid action",
                 type: "error"
               })
             }
-            party.participants.push(req.user._id)
-            party.save()
+            await party.save()
             return res.status(200).json({
-              message: "Successfully joined party",
+              message: "Operation successful",
               type: "success",
               id: party._id
             })

@@ -60,11 +60,12 @@ module.exports = new Crud(
         })
       },
       "read": (parent, router, route, validator) => {
-        parent.settings.read_router = internal = Router()
+        parent.settings.read_router = internal = Router({mergeParams: true})
         router.use("/:id", internal)
         console.log(` --> creating operation GET @ ${route}/:id`)
         internal.get(`/`, (req, res) => {
           let query = {}
+          console.log(req.params)
           query._id = req.params.id
           parent.model.findOne(query)
             .then(obj => {
