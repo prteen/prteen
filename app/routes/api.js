@@ -22,7 +22,12 @@ images.register(router, "/images")
 router.use("/auth", auth)
 
 router.get("/", (_req, res) => {
-  res.send("<a href=parties>parties/</a><br><a href=users>users/</a><br><a href=auth>auth/</a>")
+  let html = "<h1>API</h1>"
+  for(const c of [parties.users, parties.organizers, parties.public, users, friendships, images]) {
+    console.log(c)
+    html += `<a href=/api/v1${c.route}>${c.route}</a><br>`
+  }
+  res.send(html)
 })
 
 

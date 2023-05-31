@@ -169,7 +169,11 @@ class Crud {
   }
 
   register(parent, route) {
-    Object.keys(operations).forEach((operation) => {
+    this.route = route
+    Object.keys(operations).forEach(operation => {
+      if(operation == "read_all") {
+        this.settings.getter = route
+      }
       if(operation in this.settings.overrides) {
         console.log(`=> Creating [overridden] operation ${operation} for route ${route}`)
         this.settings.overrides[operation](this, this.settings.router, route)

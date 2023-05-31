@@ -20,7 +20,6 @@ module.exports = async function(port, callback) {
   app.use("/api/v1", api_router)
   
   app.get("/favicon.ico", (_req, res) => {
-    console.log("favicon")
     res.set("Content-Type", "image/x-icon")
     fs.createReadStream("res/favicon.ico").pipe(res)
   })
