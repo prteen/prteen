@@ -157,7 +157,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Party'
         '404':
-          description: No Content
+          description: Party not found
   /parties/users:
     get: 
       summary: Get a list of all parties the user is participating in
