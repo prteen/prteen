@@ -3,6 +3,8 @@ info:
   title: Prteen
   version: 1.0.0
   description: API for searching, creating and participating to parties
+servers:
+  - url: https://prteen.onrender.com/api/v1
 
 paths:
   /parties:
@@ -242,6 +244,8 @@ paths:
       responses:
         '201':
           description: User created successfully
+        '400':
+          description: Missing username, email or password
         '409':
           description: User already exists
   /auth/signout:
