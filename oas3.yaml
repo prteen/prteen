@@ -3,6 +3,8 @@ info:
   title: Prteen
   version: 1.0.0
   description: API for searching, creating and participating to parties
+servers:
+  - url: https://prteen.onrender.com/api/v1
 
 paths:
   /parties:
