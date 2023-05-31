@@ -8,26 +8,40 @@ paths:
   /parties:
     get:
       summary: Get a list of all public parties        
+      security: []
       parameters:       
         - in: query
           name: tags
+          description: List of tags to filter by
+          required: false
           schema:
             type: array
             items:
               type: string
+          style: form
         - in: query
           name: date
+          description: Date to filter by
+          required: false
           schema:
-            type: date
+            type: string
       responses:
         '200':
           description: OK
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
   /parties/{party_id}:
     get:
       summary: Get details of a specific public party
+      security: []
       parameters:
         - in: path
           name: party_id
+          description: ID of the party to get
           required: true
           schema:
             type: string
@@ -35,6 +49,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party'
         '404':
           description: Party not found
   /parties/organizers/:
@@ -45,6 +63,12 @@ paths:
       responses:
         '200':
           description: OK
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
     post:
       summary: Create a new party
       security:
@@ -58,6 +82,15 @@ paths:
       responses:
         '201':
           description: Party created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: ID of the party created
+                    type: string
+                    format: uuid
   /parties/organizers/{party_id}:
     get:
       summary: Get details of a specific party created by the user
@@ -72,6 +105,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party'
         '404':
           description: Party not found
     put:
@@ -93,6 +130,10 @@ paths:
       responses:
         '200':
           description: Party updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party' 
         '404':
           description: Party not found
         '409':
@@ -100,7 +141,7 @@ paths:
     delete:
       summary: Delete a specific party
       security:
-        BearerAuth: [organizer]
+        - BearerAuth: [organizer]
       parameters:
         - name: party_id
           in: path
@@ -110,6 +151,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party'
         '404':
           description: No Content
   /parties/users:
@@ -120,6 +165,12 @@ paths:
       responses:
         '200':
           description: OK 
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
   /parties/join/{party_id}:
     put:
       summary: Join a party
@@ -144,6 +195,7 @@ paths:
   /auth/login:
     post:
       summary: Authenticate user
+      security: []
       requestBody:
         required: true
         content:
@@ -153,11 +205,21 @@ paths:
               properties:
                 username:
                   type: string
+                  required: true
                 password:
                   type: string
+                  required: true
       responses:
         '200':
-          description: OK
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    format: jwt
         '404':
           description: User not found
         '400':
@@ -165,6 +227,7 @@ paths:
   /auth/register:
     post:
       summary: Register user
+      security: []
       requestBody:
         required: true
         content:
@@ -179,6 +242,7 @@ paths:
   /auth/signout:
     post:
       summary: Sign out user
+      security: []
       requestBody:
         required: true
         content:
@@ -194,6 +258,7 @@ paths:
   /auth/refresh_token:
     post:
       summary: Refresh user token
+      security: []
       requestBody:
         required: true
         content:
@@ -220,6 +285,12 @@ paths:
       responses:
         '200':
           description: OK
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friendship'
     post: 
       summary: Send a friend request
       security:
@@ -230,10 +301,10 @@ paths:
           application/json:
             schema:
               type: object
+              description: ID of the user to send the request to
               properties:
                 to:
-                  type: string
-                  format: uuid
+                  $ref: '#/components/schemas/ObjectID'
       responses:
         '201':
           description: Friendship request sent
@@ -354,11 +425,23 @@ components:
               format: byte
             contentType:
               type: string
-    securitySchemes:
-      BearerAuth:
-        type: http
-        scheme: bearer
-        bearerFormat: JWT
+    Friendship:
+      type: object
+      properties:
+        from:
+          $ref: '#/components/schemas/ObjectID'
+        to:
+          $ref: '#/components/schemas/ObjectID'
+        status:
+          type: string
+          enum: [pending, accepted, rejected]
+    ObjectID:
+      type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 security:
   - BearerAuth:
     - organizer
