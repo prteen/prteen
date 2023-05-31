@@ -242,6 +242,8 @@ paths:
       responses:
         '201':
           description: User created successfully
+        '400':
+          description: Missing username, email or password
         '409':
           description: User already exists
   /auth/signout:

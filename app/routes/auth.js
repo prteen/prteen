@@ -15,6 +15,11 @@ const {User} = require('../models/user');
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    if (!username || !email || !password)
+      return res.status(400).json({
+        message: "Missing username, email or password",
+        type: "error"
+      })
     const user = await User.findOne({ username: username });
 
     if (user)
