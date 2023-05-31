@@ -11,10 +11,14 @@ module.exports = new Crud(
         router.get("/", protected, (req, res) => {
           parent.model.find({"participants": {"$in": [req.user._id]}})
             .then(objs => {
-              res.json(objs)
+              return res.json(objs)
             })
             .catch(err => {
-              console.log(err)
+              return res.status(500).json({
+                message: "Failed to get objs",
+                type: "error",
+                error: err 
+              })
             })
         })
       },

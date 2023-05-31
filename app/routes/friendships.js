@@ -6,49 +6,43 @@ const { User } = require("../models/user")
 const user_crud = new Crud(
   Friendship,
   {
-    identifiers: {
-      _id: "id",
-      from: null,
-      to: null
-    },
     overrides: {
       create: (parent, router, route, validator) => {
         console.log(` --> creating operation POST @ ${route}/ [protected]`)
         router.post("/", protected, async (req, res) => {
           let from = req.user._id
-          let to_username = req.body.to // username
-          if (to_username == null) {
-            return res.status(400).json({error: "Missing username"})
-          } else if (to_username == req.user.username) {
-            return res.status(400).json({error: "Cannot add yourself"})
-          }
+          let to_username = req.body.to
+          if (to_username == null || to_username == req.user.username) {
+            return res.status(400).json({error: "Invalid username"})
+          } 
           let user2 = await User.findOne({username: to_username})
           if (user2 == null) {
-            return res.status(400).json({error: "User does not exist"})
+            return res.status(404).json({error: "User not found"})
           }
 
-          Friendship.findOne({$or: [{from: from, to: user2._id}, {from: user2._id, to: from}]})
-            .then(friendship => {
-              if (friendship != null) {
-                return res.status(400).json({error: "Friendship already exists"})
-              }
-              let status = "pending"
-              let new_friendship = new Friendship({
-                from,
-                to: user2._id,
-                status
-              })
-              new_friendship.save()
-                .then(friendship => {
-                  res.json(friendship)
-                })
-                .catch(err => {
-                  console.log(err)
-                })
+          try {
+            let friendship = await Friendship.findOne({$or: [{from: from, to: user2._id}, {from: user2._id, to: from}]})
+            if (friendship != null) {
+              return res.status(409).json({error: "Friendship already exists"})
+            }
+            let new_friendship = new Friendship({
+              from,
+              to: user2._id,
+              status: "pending"
             })
-            .catch(err => {
-              console.log(err)
+            await new_friendship.save()
+            return res.json({
+              message: "Friendship request sent", 
+              type: "success", 
+              id: new_friendship._id
             })
+          } catch (error) {
+            return res.status(500).json({
+              message: "Failed to create new friendship",
+              type: "error",
+              error: err
+            })
+          }
         })
       }, 
       read_all: (parent, router, route, validator) => {
@@ -60,26 +54,25 @@ const user_crud = new Crud(
               res.json(friendships)
             })
             .catch(err => {
+              // todo: handle error
               console.log(err)
             })
         })
       },
       update: (parent, router, route, validator) => {
         console.log(` --> creating operation PUT @ ${route}/id/:id [protected]`)
-        router.put("/id/:id", protected, (req, res) => {
+        router.put("/:id", protected, (req, res) => {
           let id = req.params.id
           let user = req.user._id
           let status = req.body.status
           Friendship.findById(id)
             .then(friendship => {
               if (friendship == null) {
-                return res.status(400).json({error: "Friendship does not exist"})
+                return res.status(404).json({error: "Friendship not found"})
               }
-              if(friendship.from.equals(user)) {
-                return res.status(403).json({error: "Cannot modify sent friendship request."})
-              } else if (friendship.to.equals(user)) {
+              if (friendship.to.equals(user)) {
                 if (friendship.status != "pending") {
-                  return res.status(400).json({error: "Friendship request has already been accepted/rejected"})
+                  return res.status(409).json({error: "Friendship request has already been accepted / rejected"})
                 }
                 if (status != "accepted" && status != "rejected") {
                   return res.status(400).json({error: "Invalid status", status: status})
@@ -88,7 +81,11 @@ const user_crud = new Crud(
                 friendship.status = status 
                 friendship.save()
                   .then(friendship => {
-                    res.json(friendship)
+                    res.json({
+                      message: "Friendship request updated",
+                      type: "success",
+                      id: friendship._id
+                    })
                   })
               } else {
                 res.status(403).json({error: "Forbidden"})
@@ -108,11 +105,11 @@ const user_crud = new Crud(
           Friendship.findById(id)
             .then(friendship => {
               if (friendship == null) {
-                return res.status(400).json({error: "Friendship does not exist"})
+                return res.status(404).json({error: "Friendship not found"})
               }
               if (friendship.from.equals(user)) {
                 if (friendship.status == "rejected") {
-                  return res.status(400).json({error: "Cannot delete rejected friendship"})
+                  return res.status(409).json({error: "Cannot delete rejected friendship"})
                 }
                 friendship.deleteOne()
                   .then(friendship => {
@@ -123,11 +120,14 @@ const user_crud = new Crud(
                   })
               } else if (friendship.to.equals(user)) { 
                 if (friendship.status == "pending") {
-                  return res.status(400).json({error: "Cannot delete pending friendship"})
+                  return res.status(400).json({error: "Cannot delete pending friendship request"})
                 }
                 friendship.deleteOne()
                   .then(friendship => {
-                    res.json(friendship)
+                    res.json({
+                      message: "Friendship deleted",
+                      type: "success"
+                    })
                   })
                   .catch(err => {
                     console.log(err)
@@ -142,7 +142,7 @@ const user_crud = new Crud(
         })
       }
     },
-    exclude: []
+    exclude: "__all__"
   }
 )
 
