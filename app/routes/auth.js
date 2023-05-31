@@ -50,10 +50,16 @@ router.post("/login", async (req, res) => {
   try {
     const {username, password} = req.body;
 
+    if (!username || !password) 
+      return res.status(400).json({
+        message: "Missing username or password",
+        type: "error"
+      })
+
     const user = await User.findOne({ username: username });
     // check if user existatus
     if (!user)
-      return res.status(409).json({
+      return res.status(404).json({
         message: "User not found",
         type: "error"
       })
@@ -62,7 +68,7 @@ router.post("/login", async (req, res) => {
 
     // if the passwords hashes don't match
     if (!is_correct) {
-      return res.status(400).json({
+      return res.status(401).json({
         message: "Incorrect password",
         type: "error"
       })

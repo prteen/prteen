@@ -218,8 +218,10 @@ paths:
                     format: jwt
         '404':
           description: User not found
-        '400':
+        '401':
           description: Incorrect password
+        '400':
+          description: Missing username or password
   /auth/register:
     post:
       summary: Register user
