@@ -36,7 +36,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Party'
-  /parties/{party_id}:
+  /parties/id/{party_id}:
     get:
       summary: Get details of a specific public party
       security: []
@@ -264,6 +264,25 @@ paths:
       responses:
         '200':
           description: Logged Out
+  /auth/me:
+    get:
+      summary: Get current user details
+      security: [normal]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    schema:
+                      $ref: "#/components/schemas/ObjectID"
+                  username:
+                    type: string
+                  email:
+                    type: string
   /auth/refresh_token:
     post:
       summary: Refresh user token
@@ -407,6 +426,8 @@ components:
           items:
             type: string
           uniqueItems: true
+        private:
+          type: boolean
     User:
       type: object
       properties:

@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { hash, compare } = require('bcryptjs');
-const { verify } = require('jsonwebtoken');
+const express = require('express')
+const router = express.Router()
+const { hash, compare } = require('bcryptjs')
+const { verify } = require('jsonwebtoken')
+const { protected } = require("../utils/protected")
 
 const {
   create_access_token,
@@ -97,6 +98,14 @@ router.post("/login", async (req, res) => {
       err
       })
   }
+})
+
+router.get("/me", protected, async (req, res) => {
+  return res.json({
+    id: req.user,
+    username: req.user.username,
+    email: req.user.email
+  })
 })
 
 // signout function

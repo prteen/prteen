@@ -11,12 +11,7 @@ module.exports = new Crud(
       update: (parent, router, route, validator) => {
         console.log(` --> creating operation POST @ ${route}/\{partyId\}/join [protected]`)
         router.put("/:id", protected, async (req, res) => {
-          try {
-            let success = {
-              message: "Operation successful",
-              type: "success",
-              id: party._id
-            }
+          try { 
             let party = await parent.model.findById(req.params.id)
             if(party === null) {
               return res.status(404).json({
@@ -24,6 +19,11 @@ module.exports = new Crud(
                 type: "error"
               })
             }
+            let success = res.status(200).json({
+              message: "Operation successful",
+              type: "success",
+              id: party._id
+            })
             if(party.private && !party.invited.includes(req.user._id)) {
               return res.status(404).json({
                 message: "Party not found",
@@ -55,7 +55,7 @@ module.exports = new Crud(
               })
             }
             await party.save()
-            return res.status(200).json(success)
+            return success
           } catch (error) {
             return res.status(500).json({
               message: "Failed to update obj",

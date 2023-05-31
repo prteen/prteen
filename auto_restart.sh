@@ -2,7 +2,7 @@
 
 function update_usage() {
   USAGE_OLD=$USAGE
-  USAGE=$(du --exclude=.git --exclude=node_modules --bytes --summarize | cut --fields=1)
+  USAGE=$(du --exclude=.git --exclude=node_modules --exclude=tests --bytes --summarize | cut --fields=1)
 }
 
 while true; do
