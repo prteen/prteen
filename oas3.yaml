@@ -1,0 +1,448 @@
+openapi: 3.0.3
+info:
+  title: Prteen
+  version: 1.0.0
+  description: API for searching, creating and participating to parties
+
+paths:
+  /parties:
+    get:
+      summary: Get a list of all public parties        
+      security: []
+      parameters:       
+        - in: query
+          name: tags
+          description: List of tags to filter by
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+        - in: query
+          name: date
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
+  /parties/{party_id}:
+    get:
+      summary: Get details of a specific public party
+      security: []
+      parameters:
+        - in: path
+          name: party_id
+          description: ID of the party to get
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party'
+        '404':
+          description: Party not found
+  /parties/organizers/:
+    get:
+      summary: Get a list of all parties created by the user
+      security:
+        - BearerAuth: [organizer]
+      responses:
+        '200':
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
+    post:
+      summary: Create a new party
+      security:
+        - BearerAuth: [normal]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Party'
+      responses:
+        '201':
+          description: Party created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: ID of the party created
+                    type: string
+                    format: uuid
+  /parties/organizers/{party_id}:
+    get:
+      summary: Get details of a specific party created by the user
+      security:
+        - BearerAuth: [organizer]
+      parameters:
+        - in: path
+          name: party_id
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party'
+        '404':
+          description: Party not found
+    put:
+      summary: Update details of a specific party created by the user
+      security:
+        - BearerAuth: [organizer]
+      parameters:
+        - name: party_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Party'
+      responses:
+        '200':
+          description: Party updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party' 
+        '404':
+          description: Party not found
+        '409':
+          description: Read-only field
+    delete:
+      summary: Delete a specific party
+      security:
+        - BearerAuth: [organizer]
+      parameters:
+        - name: party_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Party'
+        '404':
+          description: No Content
+  /parties/users:
+    get: 
+      summary: Get a list of all parties the user is participating in
+      security:
+        - BearerAuth: [participant]
+      responses:
+        '200':
+          description: OK 
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
+  /parties/join/{party_id}:
+    put:
+      summary: Join a party
+      security:
+        - BearerAuth: [normal]
+      parameters:
+        - name: party_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid action
+        '404':
+          description: Party not found
+        '409':
+          description: Party is full
+  /auth/login:
+    post:
+      summary: Authenticate user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  required: true
+                password:
+                  type: string
+                  required: true
+      responses:
+        '200':
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    format: jwt
+        '404':
+          description: User not found
+        '400':
+          description: Incorrect password
+  /auth/register:
+    post:
+      summary: Register user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+        '409':
+          description: User already exists
+  /auth/signout:
+    post:
+      summary: Sign out user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Logged Out
+  /auth/refresh_token:
+    post:
+      summary: Refresh user token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+        '400':
+          description: Missing refresh token
+        '401':
+          description: Invalid refresh token
+        '403':
+          description: Refresh token expired
+  /friendships:
+    get: 
+      summary: Get a list of all friends
+      security:
+        - BearerAuth: [normal]
+      responses:
+        '200':
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friendship'
+    post: 
+      summary: Send a friend request
+      security:
+        - BearerAuth: [normal]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ID of the user to send the request to
+              properties:
+                to:
+                  $ref: '#/components/schemas/ObjectID'
+      responses:
+        '201':
+          description: Friendship request sent
+        '400':
+          description: Invalid username
+        '404':
+          description: User not found
+        '409':
+          description: Frienship already exists
+  /friendships/{friendship_id}:
+    put: 
+      summary: Accept / Reject a friend request
+      security:
+        - BearerAuth: [normal]
+      parameters:
+        - name: friendship_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Friendship request updated
+        '400':
+          description: Invalid status
+        '404':
+          description: Friendship not found
+        '403':
+          description: Forbidden
+        '409':
+          description: Friendship request has already been accepted / rejected 
+    delete:
+      summary: Delete a friendship
+      security:
+        - BearerAuth: [normal]
+      parameters:
+        - name: friendship_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Friendship deleted
+        '400':
+          description: Cannot delete pending friendship request
+        '403':
+          description: Forbidden
+        '404':
+          description: Friendship not found
+        '409':
+          description: Cannot delete rejected friendship
+components:
+  schemas:
+    Party:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        date:
+          type: string
+          format: date-time
+        location:
+          type: string
+        organizer:
+          type: string
+          format: uuid
+        max_participants:
+          type: integer
+        participants:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        profile_picture:
+          type: string
+          format: uuid
+        refresh_token:
+          type: string
+    Image:
+      type: object
+      properties:
+        img:
+          type: object
+          properties:
+            data:
+              type: string
+              format: byte
+            contentType:
+              type: string
+    Friendship:
+      type: object
+      properties:
+        from:
+          $ref: '#/components/schemas/ObjectID'
+        to:
+          $ref: '#/components/schemas/ObjectID'
+        status:
+          type: string
+          enum: [pending, accepted, rejected]
+    ObjectID:
+      type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth:
+    - organizer
+    - participant
+    - normal
