@@ -9,7 +9,7 @@ paths:
     get:
       summary: Get a list of all public parties        
       security: []
-      parameters:       
+      parameters:    
         - in: query
           name: tags
           description: List of tags to filter by
@@ -18,10 +18,10 @@ paths:
             type: array
             items:
               type: string
-          style: form
+          style: pipeDelimited
         - in: query
           name: date
-          description: Date to filter by
+          description: Date in which the party starts from
           required: false
           schema:
             type: string
@@ -43,9 +43,8 @@ paths:
           name: party_id
           description: ID of the party to get
           required: true
-          schema:
-            type: string
-            format: uuid
+          schema: 
+            $ref: '#/components/schemas/ObjectID'
       responses:
         '200':
           description: OK
@@ -89,8 +88,8 @@ paths:
                 properties:
                   id:
                     description: ID of the party created
-                    type: string
-                    format: uuid
+                    schema:
+                      $ref: '#/components/schemas/ObjectID'
   /parties/organizers/{party_id}:
     get:
       summary: Get details of a specific party created by the user
@@ -98,10 +97,10 @@ paths:
         - BearerAuth: [organizer]
       parameters:
         - in: path
+          required: true
           name: party_id
           schema:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/ObjectID'
       responses:
         '200':
           description: OK
@@ -120,7 +119,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/ObjectID'
       requestBody:
         required: true
         content:
@@ -147,7 +146,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/ObjectID'
       responses:
         '200':
           description: OK
@@ -181,8 +180,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/ObjectID'
       responses:
         '200':
           description: OK
@@ -205,10 +203,8 @@ paths:
               properties:
                 username:
                   type: string
-                  required: true
                 password:
                   type: string
-                  required: true
       responses:
         '200':
           description: Logged in successfully
@@ -233,7 +229,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
       responses:
         '201':
           description: User created successfully
@@ -324,8 +327,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/ObjectID'
       requestBody:
         required: true
         content:
@@ -355,8 +357,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            format: uuid
+            $ref: '#/components/schemas/ObjectID'
       responses:
         '200':
           description: Friendship deleted
@@ -437,6 +438,7 @@ components:
           enum: [pending, accepted, rejected]
     ObjectID:
       type: string
+      format: 
   securitySchemes:
     BearerAuth:
       type: http
