@@ -3,6 +3,7 @@ const body_parser = require('body-parser')
 const cookie_parser = require('cookie-parser')
 const morgan = require('morgan')
 const fs = require('fs')
+const cors = require('cors')
 
 module.exports = async function(port, callback) {
   const api_router = require("./routes/api")
@@ -13,6 +14,10 @@ module.exports = async function(port, callback) {
   })
 
   app.use(morgan('dev'))
+  app.use(cors({
+    origin: 'http://127.0.0.1:8090',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  }))
   app.use(body_parser.json());
   app.use(body_parser.urlencoded({extended: true}))
   app.use(cookie_parser())
