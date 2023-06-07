@@ -70,6 +70,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Party'
+        '401':
+          description: Unauthorized
     post:
       summary: Create a new party
       security:
@@ -92,6 +94,8 @@ paths:
                     description: ID of the party created
                     schema:
                       $ref: '#/components/schemas/ObjectID'
+        '403':
+          description: Unauthorized
   /parties/organizers/{party_id}:
     get:
       summary: Get details of a specific party created by the user
@@ -110,6 +114,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Party'
+        '401':
+          description: Unauthorized
         '404':
           description: Party not found
     put:
@@ -135,6 +141,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Party' 
+        '401':
+          description: Unauthorized
         '404':
           description: Party not found
         '409':
@@ -156,8 +164,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Party'
+        '401':
+          description: Unauthorized
         '404':
-          description: No Content
+          description: Party not found
   /parties/users:
     get: 
       summary: Get a list of all parties the user is participating in
@@ -172,6 +182,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Party'
+        '401':
+          description: Unauthorized
   /parties/join/{party_id}:
     put:
       summary: Join a party
@@ -188,6 +200,8 @@ paths:
           description: OK
         '400':
           description: Invalid action
+        '401':
+          description: Unauthorized
         '404':
           description: Party not found
         '409':
@@ -218,12 +232,12 @@ paths:
                   access_token:
                     type: string
                     format: jwt
-        '404':
-          description: User not found
-        '401':
-          description: Incorrect password
         '400':
           description: Missing username or password
+        '401':
+          description: Incorrect password
+        '404':
+          description: User not found
   /auth/register:
     post:
       summary: Register user
@@ -267,7 +281,8 @@ paths:
   /auth/me:
     get:
       summary: Get current user details
-      security: [normal]
+      security: 
+        - BearerAuth: [normal]
       responses:
         '200':
           description: OK
@@ -283,6 +298,8 @@ paths:
                     type: string
                   email:
                     type: string
+        '401':
+          description: Unauthorized
   /auth/refresh_token:
     post:
       summary: Refresh user token
@@ -319,6 +336,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Friendship'
+        '401':
+          description: Unauthorized
     post: 
       summary: Send a friend request
       security:
@@ -338,6 +357,8 @@ paths:
           description: Friendship request sent
         '400':
           description: Invalid username
+        '401':
+          description: Unauthorized
         '404':
           description: User not found
         '409':
@@ -367,6 +388,8 @@ paths:
           description: Friendship request updated
         '400':
           description: Invalid status
+        '401':
+          description: Unauthorized
         '404':
           description: Friendship not found
         '403':
@@ -388,6 +411,8 @@ paths:
           description: Friendship deleted
         '400':
           description: Cannot delete pending friendship request
+        '401':
+          description: Unauthorized
         '403':
           description: Forbidden
         '404':
@@ -410,7 +435,7 @@ components:
         images:
           type: array
           items:
-            $ref: '#/components/schemas/Image'
+            $ref: '#/components/schemas/ObjectID'
         date:
           type: string
           format: date-time
