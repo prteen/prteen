@@ -88,7 +88,14 @@ router.post("/login", async (req, res) => {
     await user.save()
 
     send_refresh_token(res, refresh_token)
-    send_access_token(req, res, access_token)
+
+    res.json({
+      message: "Logged in successfully",
+      type: "success",
+      access_token,
+      id: user._id,
+      email: user.email,
+    })
 
   } catch (err) {
     console.log(err)
