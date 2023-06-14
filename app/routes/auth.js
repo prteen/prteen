@@ -109,7 +109,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/me", protected, async (req, res) => {
   return res.json({
-    id: req.user,
+    id: req.user._id,
     username: req.user.username,
     email: req.user.email
   })
