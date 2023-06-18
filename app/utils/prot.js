@@ -2,9 +2,9 @@ const { verify } = require('jsonwebtoken')
 const { User } = require('../models/user')
 const { auth } = require('../../settings')
 
-// Middleware for protected routes
+// Middleware for prot routes
 // Checks if the user is authenticated and adds the user to the request
-const protected = async (req, res, next) => {
+const prot = async (req, res, next) => {
   const authorization = req.headers["authorization"]
   if (!authorization) // There's no access tokein in the headers
     return res.status(401).json({ error: 'Unauthorized' });
@@ -31,4 +31,4 @@ const protected = async (req, res, next) => {
   next();
 }
 
-module.exports = { protected };
+module.exports = { prot: prot };

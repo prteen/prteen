@@ -1,7 +1,7 @@
 const { User } = require("../models/user")
 const { Crud } = require("../interfaces/crud")
 const { Friendship } = require("../models/friendship")
-const { protected } = require("../utils/protected")
+const { prot } = require("../utils/prot")
 
 
 // todo: this will be eventually deleted since direct access to users will be disabled 
@@ -15,8 +15,8 @@ module.exports = new Crud(
     overrides: {
       read: (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
-          console.log(` --> creating operation GET @ ${route}/${id_symb}/:id [protected]`)
-          router.get(`/${id_symb}:id`, protected, async (req, res) => {
+          console.log(` --> creating operation GET @ ${route}/${id_symb}/:id [prot]`)
+          router.get(`/${id_symb}:id`, prot, async (req, res) => {
             try {
               let query = {}
               query[id_db] = req.params.id

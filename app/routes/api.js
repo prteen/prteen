@@ -7,7 +7,7 @@ const auth = require("./auth")
 const friendships = require("./friendships")
 const images = require("./image")
 
-parties.public.register(router, "/parties")
+parties.public_p.register(router, "/parties")
 
 parties.users.register(router, "/parties/users")
 parties.organizers.register(router, "/parties/organizers")
@@ -23,7 +23,7 @@ router.use("/auth", auth)
 
 router.get("/", (_req, res) => {
   let html = "<h1>API</h1>"
-  for(const c of [parties.users, parties.organizers, parties.public, users, friendships, images]) {
+  for(const c of [parties.users, parties.organizers, parties.public_p, users, friendships, images]) {
     console.log(c)
     html += `<a href=/api/v1${c.route}>${c.route}</a><br>`
   }

@@ -1,14 +1,14 @@
 const { Party } = require("../../models/party")
 const { Crud } = require("../../interfaces/crud")
-const { protected } = require("../../utils/protected")
+const { prot } = require("../../utils/prot")
 
 module.exports = new Crud(
   Party,
   {
     overrides: {
       "create": (parent, router, route, validator) => {
-        console.log(` --> creating operation POST @ ${route}/ [protected]`)
-        router.post("/", protected, async (req, res) => {
+        console.log(` --> creating operation POST @ ${route}/ [prot]`)
+        router.post("/", prot, async (req, res) => {
           try {
             let obj = new parent.model(req.body)
             obj.organizer = req.user._id
@@ -30,8 +30,8 @@ module.exports = new Crud(
       },
       "update": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
-          console.log(` --> creating operation PUT @ ${route}/${id_symb} [protected]`)
-          router.put(`/${id_symb}:id`, protected, async (req, res) => {
+          console.log(` --> creating operation PUT @ ${route}/${id_symb} [prot]`)
+          router.put(`/${id_symb}:id`, prot, async (req, res) => {
             try {
               let query = {}
               query[id_db] = req.params.id
@@ -71,8 +71,8 @@ module.exports = new Crud(
       },
       "read_all": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
-          console.log(` --> creating operation GET @ ${route}/${id_symb} [protected]`)
-          router.get(`/`, protected, async (req, res) => {
+          console.log(` --> creating operation GET @ ${route}/${id_symb} [prot]`)
+          router.get(`/`, prot, async (req, res) => {
             try {
               let query = {"organizer": req.user._id}
               let objs = await parent.model.find(query)
@@ -89,8 +89,8 @@ module.exports = new Crud(
       },
       "read": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
-          console.log(` --> creating operation GET @ ${route}/${id_symb} [protected]`)
-          router.get(`/${id_symb}:id`, protected, async (req, res) => {
+          console.log(` --> creating operation GET @ ${route}/${id_symb} [prot]`)
+          router.get(`/${id_symb}:id`, prot, async (req, res) => {
             try {
               let query = {organizer: req.user._id}
               query[id_db] = req.params.id
@@ -114,8 +114,8 @@ module.exports = new Crud(
       },
       "delete": (parent, router, route, validator) => {
         parent.settings.forIdentifiers((id_db, id_symb) => {
-          console.log(` --> creating operation DELETE @ ${route}/${id_symb} [protected]`)
-          router.delete(`/${id_symb}:id`, protected, async (req, res) => {
+          console.log(` --> creating operation DELETE @ ${route}/${id_symb} [prot]`)
+          router.delete(`/${id_symb}:id`, prot, async (req, res) => {
             try {
               let query = {}
               query[id_db] = req.params.id

@@ -1,6 +1,6 @@
 const { Party } = require("../../models/party")
 const { Crud } = require("../../interfaces/crud")
-const { protected } = require("../../utils/protected")
+const { prot } = require("../../utils/prot")
 const { Router } = require("express")
 
 module.exports = new Crud(
@@ -9,8 +9,8 @@ module.exports = new Crud(
     router: Router({mergeParams: true}),
     overrides: {
       update: (parent, router, route, validator) => {
-        console.log(` --> creating operation POST @ ${route}/\{partyId\}/join [protected]`)
-        router.put("/:id", protected, async (req, res) => {
+        console.log(` --> creating operation POST @ ${route}/\{partyId\}/join [prot]`)
+        router.put("/:id", prot, async (req, res) => {
           try { 
             let party = await parent.model.findById(req.params.id)
             if(party === null) {
@@ -34,7 +34,7 @@ module.exports = new Crud(
               if(party.participants.includes(req.user._id)) {
                 return success()
               } else {
-                if(party.participants.lenght == party.maxParticipants) {
+                if(party.participants.length == party.max_participants) {
                   return res.status(409).json({
                     message: "Party is full",
                     type: "error"

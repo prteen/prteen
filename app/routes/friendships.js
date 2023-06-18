@@ -1,5 +1,5 @@
 const { Crud } = require("../interfaces/crud")
-const { protected } = require("../utils/protected")
+const { prot } = require("../utils/prot")
 const { Friendship } = require("../models/friendship")
 const { User } = require("../models/user")
 
@@ -8,8 +8,8 @@ const user_crud = new Crud(
   {
     overrides: {
       create: (parent, router, route, validator) => {
-        console.log(` --> creating operation POST @ ${route}/ [protected]`)
-        router.post("/", protected, async (req, res) => {
+        console.log(` --> creating operation POST @ ${route}/ [prot]`)
+        router.post("/", prot, async (req, res) => {
           let from = req.user._id
           let to_username = req.body.to
           if (to_username == null || to_username == req.user.username) {
@@ -46,8 +46,8 @@ const user_crud = new Crud(
         })
       }, 
       read_all: (parent, router, route, validator) => {
-        console.log(` --> creating operation GET @ / [protected]`)
-        router.get("/", protected, (req, res) => {
+        console.log(` --> creating operation GET @ / [prot]`)
+        router.get("/", prot, (req, res) => {
           let user = req.user._id
           Friendship.find({$or: [{from: user}, {to: user}]})
             .then(friendships => {
@@ -60,8 +60,8 @@ const user_crud = new Crud(
         })
       },
       update: (parent, router, route, validator) => {
-        console.log(` --> creating operation PUT @ ${route}/id/:id [protected]`)
-        router.put("/:id", protected, (req, res) => {
+        console.log(` --> creating operation PUT @ ${route}/id/:id [prot]`)
+        router.put("/:id", prot, (req, res) => {
           let id = req.params.id
           let user = req.user._id
           let status = req.body.status
@@ -98,8 +98,8 @@ const user_crud = new Crud(
         })
       },
       delete: (parent, router, route, validator) => {
-        console.log(` --> creating operation DELETE @ ${route}/:id [protected]`)
-        router.delete("/:id", protected, (req, res) => {
+        console.log(` --> creating operation DELETE @ ${route}/:id [prot]`)
+        router.delete("/:id", prot, (req, res) => {
           let id = req.params.id
           let user = req.user._id
           Friendship.findById(id)
