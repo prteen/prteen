@@ -7,6 +7,7 @@
     "dev": "node index.js",
     "restart": "./auto_restart.sh",
     "test": "jest --detectOpenHandles --forceExit",
+    "test-silent": "jest --detectOpenHandles --forceExit --silent",
     "clean-db": "node scripts/clean_db.js"
   },
   "author": "",
