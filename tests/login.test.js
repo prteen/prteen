@@ -10,7 +10,6 @@ beforeEach(async () => {
   await connect()
 });
 
-/* Closing database connection after each test. */
 afterEach(async () => {
   await disconnect()
 });

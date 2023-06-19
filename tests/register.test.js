@@ -1,6 +1,6 @@
-
 const request = require("supertest");
 const { app, server } = require("../app/app_test");
+const { User } = require("../app/models/user");
 
 const connect = require("../db/mongodb").connect;
 const disconnect = require("../db/mongodb").disconnect;
@@ -15,12 +15,26 @@ afterEach(async () => {
   await disconnect()
 });
 
+// User.findOneAndDelete({ username: "test" }, (err, user) => {
+//   if (err) {
+//     console.log(err);
+//   }
+// });
+
 describe("POST /api/v1/auth/register", () => {
   it("should return 201 User Created Successfully", async () => {
     const res = await request(app).post("/api/v1/auth/register").send({
       username: "test",
       password: "test",
       email: "test1@test.com"
+    });
+    expect(res.statusCode).toBe(201);
+  });
+  it("should return 201 User Created Successfully", async () => {
+    const res = await request(app).post("/api/v1/auth/register").send({
+      username: "test1",
+      password: "test1",
+      email: "test2@gmail.com"
     });
     expect(res.statusCode).toBe(201);
   });
@@ -38,7 +52,7 @@ describe("POST /api/v1/auth/register", () => {
   });
   it("should return 409 User Already Exists", async () => {
     const res = await request(app).post("/api/v1/auth/register").send({
-      username: "test1",
+      username: "test",
       password: "test",
       email: "test1@test.com"
     });

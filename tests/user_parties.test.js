@@ -23,7 +23,7 @@ describe("POST /api/v1/auth/login", () => {
       password: "test",
     });
     expect(res.statusCode).toBe(200);
-    token = res.body.token;
+    token = res.body.access_token;
   });
 });
 
@@ -32,6 +32,10 @@ describe("GET /api/v1/parties/users", () => {
   it("should return 200 OK", async () => {
     const res = await request(app).get("/api/v1/parties/users").set("Authorization", `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
+  });
+  it("should return 401 Unauthorized", async () => {
+    const res = await request(app).get("/api/v1/parties/users");
+    expect(res.statusCode).toBe(401);
   });
 });
 
