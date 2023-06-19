@@ -19,7 +19,7 @@ module.exports = new Crud(
                 type: "error"
               })
             }
-            let success = res.status(200).json({
+            let success = () => res.status(200).json({
               message: "Operation successful",
               type: "success",
               id: party._id
@@ -32,7 +32,7 @@ module.exports = new Crud(
             }
             if(req.body.action === "join") {
               if(party.participants.includes(req.user._id)) {
-                return success
+                return success()
               } else {
                 if(party.participants.lenght == party.maxParticipants) {
                   return res.status(409).json({
@@ -44,7 +44,7 @@ module.exports = new Crud(
               }
             } else if(req.body.action === "leave") {
               if(!party.participants.includes(req.user._id)) {
-                return success 
+                return success()
               } else {
                 party.participants.pull(req.user._id)
               }
@@ -55,7 +55,7 @@ module.exports = new Crud(
               })
             }
             await party.save()
-            return success
+            return success()
           } catch (error) {
             return res.status(500).json({
               message: "Failed to update obj",

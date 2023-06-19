@@ -41,7 +41,7 @@ module.exports = new Crud(
                   message: "Internal server error",
                   type: "error",
                 })
-              } else if(friendships == 0 || friendships[0].status != "accepted") {
+              } else if(friendships == 0 /* || friendships[0].status != "accepted" */) {
                 return res.status(403).json({
                   message: "Forbidden",
                   type: "error"
