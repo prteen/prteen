@@ -18,6 +18,10 @@ module.exports = new Crud(
           console.log(` --> creating operation GET @ ${route}/${id_symb}/:id [protected]`)
           router.get(`/${id_symb}:id`, protected, async (req, res) => {
             try {
+              if(req.user._id.equals(req.params.id)) {
+                return res.redirect("/api/v1/auth/me")
+              }
+
               let query = {}
               query[id_db] = req.params.id
               console.log(query)
