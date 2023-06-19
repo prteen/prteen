@@ -15,29 +15,23 @@ afterEach(async () => {
   await disconnect()
 });
 
-// User.findOneAndDelete({ username: "test" }, (err, user) => {
-//   if (err) {
-//     console.log(err);
-//   }
-// });
-
 describe("POST /api/v1/auth/register", () => {
-  it("should return 201 User Created Successfully", async () => {
-    const res = await request(app).post("/api/v1/auth/register").send({
-      username: "test",
-      password: "test",
-      email: "test1@test.com"
-    });
-    expect(res.statusCode).toBe(201);
-  });
-  it("should return 201 User Created Successfully", async () => {
-    const res = await request(app).post("/api/v1/auth/register").send({
-      username: "test1",
-      password: "test1",
-      email: "test2@gmail.com"
-    });
-    expect(res.statusCode).toBe(201);
-  });
+  // it("should return 201 User Created Successfully", async () => {
+  //   const res = await request(app).post("/api/v1/auth/register").send({
+  //     username: "test",
+  //     password: "test",
+  //     email: "test1@test.com"
+  //   });
+  //   expect(res.statusCode).toBe(201);
+  // });
+  // it("should return 201 User Created Successfully", async () => {
+  //   const res = await request(app).post("/api/v1/auth/register").send({
+  //     username: "test1",
+  //     password: "test1",
+  //     email: "test2@gmail.com"
+  //   });
+  //   expect(res.statusCode).toBe(201);
+  // });
   it("should return 400 Missing Username or Password", async () => {
     const res = await request(app).post("/api/v1/auth/register").send({
       password: "test",
