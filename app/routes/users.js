@@ -18,8 +18,13 @@ module.exports = new Crud(
           console.log(` --> creating operation GET @ ${route}/${id_symb}/:id [prot]`)
           router.get(`/${id_symb}:id`, prot, async (req, res) => {
             try {
+              if(req.user._id.equals(req.params.id)) {
+                return res.redirect("/api/v1/auth/me")
+              }
+
               let query = {}
               query[id_db] = req.params.id
+              console.log(query)
               let user = await parent.model.findOne(query)
               if(user === null) {
                 return res.status(404).json({
@@ -28,6 +33,7 @@ module.exports = new Crud(
                 })
               }
               let query2 = {$or: [{from: req.user._id}, {to: req.user._id}]}
+              console.log(query2)
               let all_friendships = await Friendship.find(query2)
               let friendships = all_friendships.filter(f => f.to.equals(user._id) || f.from.equals(user._id))
               if(friendships.length > 1) {
