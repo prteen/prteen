@@ -15,7 +15,7 @@ module.exports = async function(port, callback) {
 
   app.use(morgan('dev'))
   app.use(cors({
-    origin: 'http://127.0.0.1:8090',
+    origin: 'https://prteen-frontend.onrender.com',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   }))
   app.use(body_parser.json());
